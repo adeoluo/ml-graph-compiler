@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Tooling caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+
+# Experiment artifacts
+wandb/
+mlruns/
+outputs/
+checkpoints/
+*.ckpt
+*.pt
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/

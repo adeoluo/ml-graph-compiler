@@ -1,0 +1,38 @@
+---
+title: System Architecture - Ml Graph Compiler
+config:
+  theme: base
+  themeVariables:
+    fontFamily: "Inter, system-ui, sans-serif"
+    primaryColor: "#F8FAFC"
+    primaryBorderColor: "#1E293B"
+    primaryTextColor: "#1E293B"
+    lineColor: "#64748B"
+    clusterBkg: "#E2E8F0"
+    clusterBorder: "#94A3B8"
+---
+flowchart LR
+    classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef external fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+    classDef danger   fill:#EF4444,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+
+    User([User]):::external
+
+    subgraph Application["Application Service"]
+        API[API Layer]:::core
+        Core[Core Engine]:::core
+        Evaluation[Evaluation Harness]:::core
+    end
+
+    Cache[(Semantic Cache)]:::data
+    Store[(Datastore / Index)]:::data
+    LLM{{LLM Provider}}:::external
+
+    User -->|request| API
+    API --> Core
+    Core -->|lookup| Cache
+    Core -->|retrieve| Store
+    Core -->|completion| LLM
+    Core -.->|traces/metrics| Evaluation
+    Core -->|response| User
