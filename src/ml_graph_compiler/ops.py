@@ -18,7 +18,7 @@ from typing import Any
 import numpy as np
 
 from ml_graph_compiler.errors import ShapeError, UnsupportedOpError
-from ml_graph_compiler.ir import Node, TensorType, contiguous, dtype_name
+from ml_graph_compiler.ir import Node, TensorType, Value, contiguous, dtype_name
 
 Arrays = list[np.ndarray | None]
 Consts = list[np.ndarray | None]
@@ -37,6 +37,8 @@ REGISTRY: dict[str, OpSpec] = {}
 
 # Operators whose output values are fully determined by the input *types* (no data needed).
 SHAPE_ONLY_OPS = frozenset({"Shape", "Size"})
+
+_NO_VALUE = Value("_")
 
 ACTIVATIONS = ("none", "relu", "clip", "gelu", "gelu_tanh", "tanh", "sigmoid")
 
@@ -1158,6 +1160,49 @@ def _gmp(node: Node, xs: Arrays) -> list[np.ndarray]:
 
 
 # ------------------------------------------------------------------------------------------
+# fused elementwise programs (produced by the loop fusion pass)
+# ------------------------------------------------------------------------------------------
+# A FusedElementwise node carries ``program``: a list of instructions ``[op, attrs, args]``.
+# An argument ``a`` refers to node input ``a`` when ``a < len(inputs)``, to the result of
+# instruction ``a - len(inputs)`` otherwise, and ``-1`` is an omitted optional input. The last
+# instruction's result is the node's output. Every instruction is an elementwise operator.
+def _program_nodes(node: Node) -> list[tuple[Node, list[int]]]:
+    program = node.attrs.get("program")
+    if not program:
+        raise UnsupportedOpError("FusedElementwise without a program")
+    out = []
+    for op, attrs, args in program:
+        if not is_elementwise(str(op)):
+            raise UnsupportedOpError(f"FusedElementwise: {op} is not elementwise")
+        out.append((Node(str(op), [], [_NO_VALUE], dict(attrs)), [int(a) for a in args]))
+    return out
+
+
+def _fused_elementwise_infer(n: Node, t: list[TensorType | None], c: Consts) -> list[TensorType]:
+    types: list[TensorType | None] = list(t)
+    consts: Consts = list(c)
+    for sub, args in _program_nodes(n):
+        sub_types = [types[a] if a >= 0 else None for a in args]
+        sub_consts = [consts[a] if a >= 0 else None for a in args]
+        types.append(spec(sub.op).infer(sub, sub_types, sub_consts)[0])
+        consts.append(None)
+    last = types[-1]
+    assert last is not None
+    return [last]
+
+
+@register("FusedElementwise", _fused_elementwise_infer)
+def _fused_elementwise(node: Node, xs: Arrays) -> list[np.ndarray]:
+    """Evaluate the program instruction by instruction with the reference semantics."""
+    values: Arrays = list(xs)
+    for sub, args in _program_nodes(node):
+        values.append(spec(sub.op).run(sub, [values[a] if a >= 0 else None for a in args])[0])
+    last = values[-1]
+    assert last is not None
+    return [last]
+
+
+# ------------------------------------------------------------------------------------------
 # public helpers
 # ------------------------------------------------------------------------------------------
 def infer(node: Node, types: list[TensorType | None], consts: Consts) -> list[TensorType]:
@@ -1185,6 +1230,8 @@ def flops(node: Node) -> int:
         w = node.input(1).tensor_type
         k_elems = w.size // (w.shape[3] if conv_layout(node) == "NHWC" else w.shape[0])
         return 2 * out.size * k_elems
+    if node.op == "FusedElementwise":
+        return out.size * len(node.attrs.get("program", ()))
     if node.op in ("MatMul", "FusedGemm", "Gemm"):
         a = node.input(0).tensor_type
         k = a.shape[0] if node.op == "Gemm" and int(node.attrs.get("transA", 0)) else a.shape[-1]
