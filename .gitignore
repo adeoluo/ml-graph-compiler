@@ -32,3 +32,8 @@ checkpoints/
 .DS_Store
 .idea/
 .vscode/
+
+# Test and benchmark scratch
+.hypothesis/
+.pytest-tmp/
+build-c/

@@ -21,4 +21,4 @@ USER application
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s --retries=3 \
     CMD python -c "import ml_graph_compiler" || exit 1
-CMD ["python", "-m", "ml_graph_compiler"]
+CMD ["python", "-m", "ml_graph_compiler", "--help"]
