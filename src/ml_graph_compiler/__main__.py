@@ -2,15 +2,9 @@
 
 from __future__ import annotations
 
-from ml_graph_compiler import __version__
-from ml_graph_compiler.configuration import settings
+import sys
 
-
-def main() -> None:
-    header = f"Ml Graph Compiler v{__version__}"
-    status = f"environment={settings.environment}, seed={settings.seed}"
-    print(f"{header} - {status}")
-
+from ml_graph_compiler.cli import main
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

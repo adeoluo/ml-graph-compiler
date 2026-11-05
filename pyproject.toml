@@ -1,23 +1,18 @@
 [project]
 name = "ml-graph-compiler"
 version = "0.1.0"
-description = "One-line description."
+description = "A deep learning graph compiler: ONNX import, SSA IR, optimization passes, static memory planning and C code generation"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }
 authors = [{ name = "Adeolu Ogunnoiki" }]
 dependencies = [
-    "pydantic>=2.0",
-    "pydantic-settings>=2.0",
-    "structlog>=24.0",
+    "numpy>=1.26",
+    "onnx>=1.16",
 ]
 
-[project.optional-dependencies]
-# install with: uv sync --extra ml
-ml = [
-    "numpy>=1.26",
-    "torch>=2.2",
-]
+[project.scripts]
+mgc = "ml_graph_compiler.cli:main"
 
 [dependency-groups]
 dev = [
@@ -25,6 +20,15 @@ dev = [
     "mypy>=1.14",
     "pytest>=8.0",
     "pytest-cov>=5.0",
+    "hypothesis>=6.100",
+    "onnxruntime>=1.18",
+]
+# Model export and comparison benchmarks (PyTorch, torchvision, transformers): uv sync --group bench
+bench = [
+    "torch>=2.4",
+    "torchvision>=0.19",
+    "transformers>=4.44,<5",
+    "pillow>=10",
 ]
 
 [build-system]
@@ -46,6 +50,10 @@ src = ["src", "tests"]
 select = ["E", "F", "I", "N", "UP", "B", "SIM", "C4", "RUF"]
 ignore = []
 
+[tool.ruff.lint.per-file-ignores]
+# Mathematical names (X, W, M, N, K) follow the usual notation.
+"**/*.py" = ["N803", "N806"]
+
 [tool.ruff.lint.isort]
 known-first-party = ["ml_graph_compiler"]
 
@@ -54,10 +62,16 @@ python_version = "3.11"
 strict = true
 warn_unused_configs = true
 disallow_untyped_defs = true
-plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["onnxruntime.*", "torch.*", "torchvision.*", "transformers.*", "PIL.*"]
+ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-addopts = "-ra -q"
+addopts = "-ra -q -p no:cacheprovider --basetemp=.pytest-tmp"
+markers = [
+    "slow: larger tests",
+]
 testpaths = ["tests"]
 
 [tool.coverage.run]

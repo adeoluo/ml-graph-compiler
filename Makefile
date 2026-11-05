@@ -1,11 +1,11 @@
-.PHONY: help setup lint format type test coverage evaluation run diagram docker-build docker-up clean all
+.PHONY: help setup lint format type test coverage run diagram docker-build clean all
 
 help: ## Show this help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
 	  awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-14s\033[0m %s\n", $$1, $$2}'
 
 setup: ## Install dependencies and pre-commit hooks
-	uv sync --all-extras --dev
+	uv sync --dev
 	uv run pre-commit install
 
 format: ## Format automatically
@@ -25,11 +25,8 @@ test: ## Run tests
 coverage: ## Tests with coverage gate
 	uv run pytest --cov=src --cov-report=term-missing --cov-fail-under=80
 
-evaluation: ## Reproduce the results table
-	uv run python -m ml_graph_compiler.evaluation
-
-run: ## Run the application entrypoint
-	uv run python -m ml_graph_compiler
+run: ## Optimize and run a bundled sample model
+	uv run python -m ml_graph_compiler run tiny-cnn --check
 
 diagram: ## Render architecture diagram to SVG
 	mmdc -i docs/architecture/architecture.mmd \
@@ -39,11 +36,8 @@ diagram: ## Render architecture diagram to SVG
 docker-build: ## Build the image
 	docker build -t ml-graph-compiler .
 
-docker-up: ## Run via docker compose
-	docker compose up --build
-
 clean: ## Remove caches and artifacts
-	rm -rf .pytest_cache .mypy_cache .ruff_cache dist build *.egg-info coverage.xml
+	rm -rf .pytest_cache .pytest-tmp .hypothesis .mypy_cache .ruff_cache dist build *.egg-info coverage.xml
 	find . -type d -name __pycache__ -exec rm -rf {} +
 
 all: lint type coverage ## Full local gate (mirror of continuous integration)
