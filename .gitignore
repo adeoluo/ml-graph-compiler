@@ -37,3 +37,4 @@ checkpoints/
 .hypothesis/
 .pytest-tmp/
 build-c/
+scratch/

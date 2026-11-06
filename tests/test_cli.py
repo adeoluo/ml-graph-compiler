@@ -94,3 +94,47 @@ def test_plan(capsys: pytest.CaptureFixture[str]) -> None:
     payload = json.loads(capsys.readouterr().out)
     assert payload["plans"]["naive"]["inplace"] == 0
     assert payload["schedule"]["peak_after"] <= payload["schedule"]["peak_before"]
+
+
+def test_compile_checks_benchmarks_and_saves(
+    capsys: pytest.CaptureFixture[str], tmp_path: Path
+) -> None:
+    cache = str(tmp_path / "cache")
+    args = [
+        "compile",
+        "tiny-cnn",
+        "--cache-dir",
+        cache,
+        "--check",
+        "--bench",
+        "3",
+        "--threads",
+        "2",
+        "-o",
+        str(tmp_path / "out"),
+        "--emit-c",
+        str(tmp_path / "model.c"),
+        "--json",
+    ]
+    assert main(args) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["backend"] == "c" and payload["max_abs_diff_vs_interpreter"] < 1e-3
+    assert payload["latency_ms_median"] > 0 and payload["kernels"]["gemm"] == 9
+    assert (tmp_path / "out" / "model.json").exists()
+    assert "int mgc_run(" in (tmp_path / "model.c").read_text()
+
+
+def test_compile_portable_build(capsys: pytest.CaptureFixture[str], tmp_path: Path) -> None:
+    args = [
+        "compile",
+        "tiny-gpt",
+        "--cache-dir",
+        str(tmp_path),
+        "--no-openmp",
+        "--no-neon",
+        "-O",
+        "O1",
+    ]
+    assert main(args) == 0
+    out = capsys.readouterr().out
+    assert "openmp: False" in out and "neon: False" in out

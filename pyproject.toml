@@ -53,6 +53,8 @@ ignore = []
 [tool.ruff.lint.per-file-ignores]
 # Mathematical names (X, W, M, N, K) follow the usual notation.
 "**/*.py" = ["N803", "N806"]
+# Emitter methods are named after the ONNX operators they lower (op_Conv, op_MatMul, ...).
+"src/ml_graph_compiler/codegen/c.py" = ["N802"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["ml_graph_compiler"]
