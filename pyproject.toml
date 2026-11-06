@@ -55,6 +55,7 @@ ignore = []
 "**/*.py" = ["N803", "N806"]
 # Emitter methods are named after the ONNX operators they lower (op_Conv, op_MatMul, ...).
 "src/ml_graph_compiler/codegen/c.py" = ["N802"]
+"src/ml_graph_compiler/mlir/emit.py" = ["N802", "N815"]
 
 [tool.ruff.lint.isort]
 known-first-party = ["ml_graph_compiler"]
