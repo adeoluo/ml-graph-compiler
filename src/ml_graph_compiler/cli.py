@@ -190,6 +190,56 @@ def cmd_plan(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_compile(args: argparse.Namespace) -> int:
+    from ml_graph_compiler.codegen import BuildOptions, compile_graph
+    from ml_graph_compiler.interpreter import Interpreter, random_feeds
+    from ml_graph_compiler.passes import optimize
+    from ml_graph_compiler.schedule import schedule
+
+    graph = load_model(args)
+    feeds = random_feeds(graph, args.seed, int_high=args.int_high)
+    reference = Interpreter(graph).run(feeds) if args.check else None
+    optimize(graph, args.opt)
+    schedule(graph)
+    options = BuildOptions(openmp=False if args.no_openmp else None, neon=not args.no_neon)
+    compiled = compile_graph(graph, options, cache_dir=args.cache_dir)
+    if args.threads:
+        compiled.set_threads(args.threads)
+    report = compiled.report
+    assert report is not None
+    payload: dict[str, Any] = {
+        "backend": "c",
+        "pipeline": args.opt,
+        "library": str(compiled.library_path),
+        "c_lines": report.c_lines,
+        "kernels": report.kernels,
+        "arena_mb": round(report.arena_bytes / 2**20, 2),
+        "weights_mb": round(report.weights_bytes / 2**20, 2),
+        "codegen_s": report.codegen_seconds,
+        "build_s": report.build_seconds,
+        "cached": report.cached,
+        "openmp": compiled.openmp,
+        "neon": compiled.neon,
+        "threads": compiled.max_threads(),
+    }
+    outputs = compiled.run(feeds)
+    if reference is not None:
+        payload["max_abs_diff_vs_interpreter"] = max(
+            float(np.max(np.abs(outputs[k].astype(np.float64) - reference[k]))) for k in reference
+        )
+    if args.bench:
+        times = sorted(compiled.benchmark(feeds, warmup=2, repeat=args.bench))
+        payload["latency_ms_median"] = round(1000 * times[len(times) // 2], 3)
+        payload["latency_ms_min"] = round(1000 * times[0], 3)
+    if args.output:
+        payload["saved"] = str(compiled.save(args.output))
+    if args.emit_c:
+        Path(args.emit_c).write_text((compiled.library_path.parent / "model.c").read_text())
+        payload["c_source"] = args.emit_c
+    _print(payload, args.json)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mgc", description="Deep learning graph compiler: ONNX in, optimized code out."
@@ -225,6 +275,22 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--no-inplace", action="store_true", help="disable in-place reuse")
     p.add_argument("--json", action="store_true")
     p.set_defaults(fn=cmd_plan)
+
+    p = sub.add_parser("compile", help="generate C, build it with the system compiler and run it")
+    _add_model_args(p)
+    p.add_argument("-O", "--opt", default="O3")
+    p.add_argument("-o", "--output", help="directory to save the library, weights and metadata")
+    p.add_argument("--emit-c", metavar="FILE", help="also write the generated model C source")
+    p.add_argument("--cache-dir", help="build cache (default ~/.cache/ml-graph-compiler)")
+    p.add_argument("--threads", type=int, default=0, help="OpenMP threads (0 keeps the default)")
+    p.add_argument("--no-openmp", action="store_true", help="build without OpenMP")
+    p.add_argument("--no-neon", action="store_true", help="use the portable C micro kernel")
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--int-high", type=int, default=100, help="upper bound for integer inputs")
+    p.add_argument("--check", action="store_true", help="compare against the reference interpreter")
+    p.add_argument("--bench", type=int, default=0, metavar="N", help="time N runs")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_compile)
     return parser
 
 
