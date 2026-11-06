@@ -159,6 +159,37 @@ def cmd_run(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_plan(args: argparse.Namespace) -> int:
+    from ml_graph_compiler.memory import STRATEGIES, plan_memory
+    from ml_graph_compiler.passes import optimize
+    from ml_graph_compiler.schedule import schedule
+
+    graph = load_model(args)
+    optimize(graph, args.opt)
+    report = schedule(graph)
+    plans = {s: plan_memory(graph, s, inplace=not args.no_inplace).summary() for s in STRATEGIES}
+    if args.json:
+        _print({"schedule": report.__dict__, "plans": plans}, True)
+        return 0
+    mb = 2**20
+    payload: dict[str, Any] = {
+        "nodes": report.nodes,
+        "peak live (source order)": f"{report.peak_before / mb:.2f} MB",
+        "peak live (scheduled)": f"{report.peak_after / mb:.2f} MB",
+        "wavefronts": f"{report.levels} levels, widest {report.max_width}",
+        "critical path": f"{report.critical_flops / max(report.total_flops, 1):.1%} of FLOPs",
+        "arena by strategy": [
+            f"{name:<15} {p['arena_bytes'] / mb:8.2f} MB  (lower bound "  # type: ignore[operator]
+            f"{p['lower_bound_bytes'] / mb:.2f} MB, no reuse {p['naive_bytes'] / mb:.2f} MB)"  # type: ignore[operator]
+            for name, p in plans.items()
+        ],
+        "aliases": plans["greedy_by_size"]["aliases"],
+        "in place": plans["greedy_by_size"]["inplace"],
+    }
+    _print(payload, False)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mgc", description="Deep learning graph compiler: ONNX in, optimized code out."
@@ -187,6 +218,13 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--check", action="store_true", help="compare against the unoptimized graph")
     p.add_argument("--json", action="store_true")
     p.set_defaults(fn=cmd_run)
+
+    p = sub.add_parser("plan", help="schedule the graph and plan its memory arena")
+    _add_model_args(p)
+    p.add_argument("-O", "--opt", default="O3")
+    p.add_argument("--no-inplace", action="store_true", help="disable in-place reuse")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(fn=cmd_plan)
     return parser
 
 

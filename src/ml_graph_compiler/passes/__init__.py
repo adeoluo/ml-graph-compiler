@@ -16,6 +16,7 @@ from ml_graph_compiler.passes.basic import (
 )
 from ml_graph_compiler.passes.fusion import fuse
 from ml_graph_compiler.passes.layout import to_nhwc
+from ml_graph_compiler.passes.loopfuse import fuse_elementwise
 from ml_graph_compiler.passes.simplify import simplify
 
 PassFn = Callable[[Graph], int]
@@ -27,6 +28,7 @@ PASSES: dict[str, PassFn] = {
     "simplify": simplify,
     "fuse": fuse,
     "layout": to_nhwc,
+    "loopfuse": fuse_elementwise,
 }
 
 # Cumulative pipelines; each level adds one group of passes (used by the pass ablation).
@@ -50,9 +52,10 @@ PIPELINES: dict[str, list[str]] = {
         "dce",
     ],
 }
+PIPELINES["loopfuse"] = [*PIPELINES["layout"], "loopfuse", "dce"]
 PIPELINES["O1"] = PIPELINES["simplify"]
 PIPELINES["O2"] = PIPELINES["fuse"]
-PIPELINES["O3"] = PIPELINES["layout"]
+PIPELINES["O3"] = PIPELINES["loopfuse"]
 
 
 @dataclass
@@ -118,6 +121,7 @@ __all__ = [
     "eliminate_dead_code",
     "fold_constants",
     "fuse",
+    "fuse_elementwise",
     "optimize",
     "simplify",
     "to_nhwc",
