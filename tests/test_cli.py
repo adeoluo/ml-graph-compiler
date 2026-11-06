@@ -84,3 +84,13 @@ def test_module_entrypoint() -> None:
         check=True,
     )
     assert out.stdout.strip().startswith("mgc ")
+
+
+def test_plan(capsys: pytest.CaptureFixture[str]) -> None:
+    assert main(["plan", "tiny-cnn"]) == 0
+    out = capsys.readouterr().out
+    assert "greedy_by_size" in out and "lower bound" in out
+    assert main(["plan", "tiny-gpt", "--json", "--no-inplace"]) == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["plans"]["naive"]["inplace"] == 0
+    assert payload["schedule"]["peak_after"] <= payload["schedule"]["peak_before"]
