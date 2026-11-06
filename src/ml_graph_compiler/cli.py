@@ -240,6 +240,32 @@ def cmd_compile(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_mlir(args: argparse.Namespace) -> int:
+    from ml_graph_compiler.mlir import to_mlir
+    from ml_graph_compiler.passes import optimize
+
+    graph = load_model(args)
+    optimize(graph, args.opt)
+    module = to_mlir(graph, args.dialect, elide_constants=args.elide_constants)
+    if args.verify:
+        from ml_graph_compiler.mlir import mlir_verify
+
+        mlir_verify(
+            module.text, allow_unregistered=not module.fully_lowered or args.dialect == "mgc"
+        )
+    if args.output:
+        Path(args.output).write_text(module.text)
+        lowered = sum(module.lowered.values())
+        print(
+            f"wrote {args.output}: {len(module.text.splitlines())} lines, {lowered} nodes lowered, "
+            f"fallback {module.fallback or 'none'}, {module.resources} weight blobs"
+            + (", verified by mlir-opt" if args.verify else "")
+        )
+    else:
+        print(module.text, end="")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="mgc", description="Deep learning graph compiler: ONNX in, optimized code out."
@@ -291,6 +317,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--bench", type=int, default=0, metavar="N", help="time N runs")
     p.add_argument("--json", action="store_true")
     p.set_defaults(fn=cmd_compile)
+
+    p = sub.add_parser("mlir", help="export the graph as MLIR text (linalg on tensors or mgc ops)")
+    _add_model_args(p)
+    p.add_argument("-O", "--opt", default="O3")
+    p.add_argument("-o", "--output", help="write to a file instead of standard output")
+    p.add_argument("--dialect", choices=["linalg", "mgc"], default="linalg")
+    p.add_argument("--elide-constants", action="store_true", help="print large weights as elided")
+    p.add_argument("--verify", action="store_true", help="parse and verify with mlir-opt")
+    p.set_defaults(fn=cmd_mlir)
     return parser
 
 
