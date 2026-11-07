@@ -120,21 +120,16 @@ def ablation() -> None:
     for study in ("cumulative", "leave_one_out"):
         if study not in d:
             continue
-        print(
-            f"\n{study}: nodes, kernels, arena MB, median ms at 1 / 8 threads, max abs err vs ORT\n"
-        )
-        print(
-            "| Model | Config | Nodes | Kernels | Arena MB | ms, 1 thread "
-            "| ms, 8 threads | Max abs err |"
-        )
-        print("|---|---|---:|---:|---:|---:|---:|---:|")
+        print(f"\n{study}: nodes, arena MB, median ms at 1 / 8 threads, max abs err vs ORT\n")
+        print("| Model | Config | Nodes | Arena MB | ms, 1 thread | ms, 8 threads | Max abs err |")
+        print("|---|---|---:|---:|---:|---:|---:|")
         for m in MODELS:
             for config, r in d[study].get(m, {}).items():
                 if "error" in r:
-                    print(f"| {LABEL[m]} | {config} | error: {r['error'][:60]} | | | | | |")
+                    print(f"| {LABEL[m]} | {config} | error: {r['error'][:60]} | | | | |")
                     continue
                 print(
-                    f"| {LABEL[m]} | {config} | {r['nodes']} | {sum(r['kernels'].values())} | "
+                    f"| {LABEL[m]} | {config} | {r['nodes']} | "
                     f"{r['arena_bytes'] / 2**20:.1f} | {r['median_ms_t1']:.1f} | "
                     f"{r['median_ms_t8']:.1f} | {r['max_abs_err_vs_ort']:.1e} |"
                 )
@@ -146,10 +141,10 @@ def memory() -> None:
         return
     print("\nArena MB by planner (scheduled graph, O3)\n")
     print(
-        "| Model | Peak live (lower bound) | naive | first_fit | greedy_by_size "
-        "| greedy + in place |"
+        "| Model | Peak live, import order | Peak live, scheduled (lower bound) | naive (no reuse) "
+        "| first_fit | greedy_by_size | greedy_by_size + in place |"
     )
-    print("|---|---:|---:|---:|---:|---:|")
+    print("|---|---:|---:|---:|---:|---:|---:|")
     for m in MODELS:
         rows = [r for r in d["memory"].get(m, []) if r["scheduler"]]
         if not rows:
@@ -160,7 +155,8 @@ def memory() -> None:
             return f"{r['arena_bytes'] / 2**20:.1f}"
 
         print(
-            f"| {LABEL[m]} | {rows[0]['lower_bound_bytes'] / 2**20:.1f} | "
+            f"| {LABEL[m]} | {rows[0]['peak_live_bytes_import_order'] / 2**20:.1f} | "
+            f"{rows[0]['lower_bound_bytes'] / 2**20:.1f} | "
             f"{arena('naive', False)} | "
             f"{arena('first_fit', False)} | {arena('greedy_by_size', False)} | "
             f"{arena('greedy_by_size', True)} |"
