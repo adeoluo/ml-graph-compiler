@@ -1,0 +1,52 @@
+# ML Graph Compiler
+
+> A deep learning graph compiler: ONNX in, optimized C out.
+
+Languages: Python. License: MIT. Source: https://github.com/adeoluo/ml-graph-compiler-hyg
+
+## Docs
+
+- [README](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/README.md): motivation, architecture, results, quickstart, design decisions, evaluation, responsible ai, limitations, roadmap
+- [AGENTS.md](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/AGENTS.md): layout, commands and conventions for changing the code
+- [Architecture diagram](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/architecture/architecture.mmd): Mermaid source of the component diagram
+- [Data Card - ML Graph Compiler](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/DATA_CARD.md)
+- [Definition of Done](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/DEFINITION_OF_DONE.md)
+- [Evaluation Report - ML Graph Compiler](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/EVALUATION_REPORT.md)
+- [Model / System Card - ML Graph Compiler](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/MODEL_CARD.md)
+- [Threat Model: ML Graph Compiler](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/THREAT_MODEL.md)
+- [ADR-0001: Record architecture decisions](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0001-record-architecture-decisions.md)
+- [ADR-0002: An SSA graph IR with static shapes and one operator table](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0002-ssa-ir-with-static-shapes.md)
+- [ADR-0003: Static arena memory planning with greedy-by-size placement](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0003-static-arena-memory-planning.md)
+- [ADR-0004: Generate C and build it with clang, NEON and OpenMP](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0004-c-code-generation-with-clang.md)
+- [ADR-0005: Convert convolution regions to NHWC with a transpose-sinking pass](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0005-nhwc-layout-transformation.md)
+- [ADR-0006: MLIR as a textual export, verified and optionally executed with LLVM tools](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/0006-mlir-textual-export.md)
+- [ADR-NNNN: <short title>](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/docs/adr/template.md)
+- [Changelog](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/CHANGELOG.md): release history
+
+## Source
+
+- [src/ml_graph_compiler/__init__.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/__init__.py): ml-graph-compiler: ONNX import, SSA graph IR, optimization passes and code generation.
+- [src/ml_graph_compiler/cli.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/cli.py): Command line interface: ``python -m ml_graph_compiler`` or ``mgc``.
+- [src/ml_graph_compiler/codegen/__init__.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/codegen/__init__.py): C code generation backend: emitter, build driver and ctypes runtime.
+- [src/ml_graph_compiler/codegen/build.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/codegen/build.py): Compile generated C into a shared library with the system C compiler.
+- [src/ml_graph_compiler/codegen/c.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/codegen/c.py): C code generation.
+- [src/ml_graph_compiler/codegen/runtime_lib.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/codegen/runtime_lib.py): Load and run a compiled model through ctypes.
+- [src/ml_graph_compiler/errors.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/errors.py): Exception types raised by the compiler.
+- [src/ml_graph_compiler/interpreter.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/interpreter.py): Reference interpreter: executes the IR with the numpy semantics in :mod:`ops`.
+- [src/ml_graph_compiler/ir.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/ir.py): Graph intermediate representation in static single assignment form.
+- [src/ml_graph_compiler/memory.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/memory.py): Static memory planning: liveness, aliasing, in-place reuse and offset assignment.
+- [src/ml_graph_compiler/mlir/__init__.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/mlir/__init__.py): MLIR textual export and an optional MLIR execution path.
+- [src/ml_graph_compiler/mlir/emit.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/mlir/emit.py): Print a graph as MLIR text (see the package docstring for the two forms).
+- [src/ml_graph_compiler/mlir/execute.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/mlir/execute.py): Verify, lower and run exported MLIR with the LLVM tools (mlir-opt, mlir-translate, clang).
+- [src/ml_graph_compiler/onnx_import.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/onnx_import.py): ONNX model importer: protobuf graph to the SSA IR, with static shapes.
+- [src/ml_graph_compiler/ops.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/ops.py): Operator registry: shape and type inference plus numpy reference semantics.
+- [src/ml_graph_compiler/passes/__init__.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/__init__.py): Optimization passes and the pass manager.
+- [src/ml_graph_compiler/passes/basic.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/basic.py): Constant folding, dead code elimination and common subexpression elimination.
+- [src/ml_graph_compiler/passes/fusion.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/fusion.py): Operator fusion.
+- [src/ml_graph_compiler/passes/layout.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/layout.py): Layout transformation: NCHW convolution and pooling regions to NHWC.
+- [src/ml_graph_compiler/passes/loopfuse.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/loopfuse.py): Loop fusion: chains of elementwise operators become one FusedElementwise node.
+- [src/ml_graph_compiler/passes/simplify.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/simplify.py): Algebraic simplification and canonicalization.
+- [src/ml_graph_compiler/passes/util.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/passes/util.py): Helpers shared by the optimization passes.
+- [src/ml_graph_compiler/samples.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/samples.py): Small ONNX models built with ``onnx.helper`` for tests, demos and smoke checks.
+- [src/ml_graph_compiler/schedule.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/schedule.py): Operator scheduling: memory-aware list scheduling and dataflow (wavefront) analysis.
+- [src/ml_graph_compiler/shape_inference.py](https://github.com/adeoluo/ml-graph-compiler-hyg/blob/main/src/ml_graph_compiler/shape_inference.py): Static shape and type inference with partial evaluation of small shape computations.
