@@ -167,19 +167,29 @@ def mlir() -> None:
     d = load("mlir")
     if d is None:
         return
-    print(
-        "\n| Model | Level | Nodes | MLIR lines | Fully lowered to linalg | Verified by mlir-opt |"
-    )
+    print("| Model | Level | Nodes | MLIR lines | Ops left in mgc dialect | Verified by mlir-opt |")
     print("|---|---|---:|---:|---|---|")
     for m in MODELS:
         for level, r in d["verify"].get(m, {}).items():
-            ok = "no: " + r["error"][:60] if "error" in r else "yes"
+            if "error" in r:
+                print(f"| {LABEL[m]} | {level} | | | | no: {r['error'][:60]} |")
+                continue
+            left = ", ".join(f"{k} x{v}" for k, v in r["fallback_ops"].items()) or "none"
+            print(f"| {LABEL[m]} | {level} | {r['nodes']} | {r['lines']:,} | {left} | yes |")
+    rows = d.get("execute", {})
+    if rows:
+        print(
+            "\n| Model | Lowered and built (s) | Max abs err vs ORT | Top-1 agrees | ms, 1 thread |"
+        )
+        print("|---|---:|---:|---|---:|")
+        for m, r in rows.items():
+            if "error" in r:
+                print(f"| {LABEL[m]} | error: {r['error'][:80]} | | | |")
+                continue
             print(
-                f"| {LABEL[m]} | {level} | {r.get('nodes', '')} | {r.get('lines', '')} | "
-                f"{r.get('fully_lowered', '')} | {ok} |"
+                f"| {LABEL[m]} | {r['build_seconds']:.0f} | {r['max_abs_err_vs_ort']:.1e} | "
+                f"{'yes' if r['top1_agree'] else 'no'} | {r['median_ms_single_thread']:.0f} |"
             )
-    for m, r in d.get("execute", {}).items():
-        print(f"\nexecute {m}: {r}")
 
 
 if __name__ == "__main__":

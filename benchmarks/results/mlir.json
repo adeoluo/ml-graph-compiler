@@ -1,0 +1,218 @@
+{
+  "machine": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14",
+    "cpus": 8,
+    "load_average_1m": 26.72,
+    "cpu": "Apple M1",
+    "memory_gb": 8.0
+  },
+  "timestamp": "2026-11-07 04:15:26",
+  "args": {
+    "models": [
+      "resnet50",
+      "mobilenetv2",
+      "bert-base",
+      "gpt2"
+    ],
+    "levels": [
+      "O0",
+      "O3"
+    ],
+    "execute": [
+      "mobilenetv2"
+    ],
+    "repeat": 5,
+    "name": "mlir"
+  },
+  "tools": "MlirTools(mlir_opt='/opt/homebrew/opt/llvm/bin/mlir-opt', mlir_translate='/opt/homebrew/opt/llvm/bin/mlir-translate', clang='/opt/homebrew/opt/llvm/bin/clang')",
+  "verify": {
+    "resnet50": {
+      "O0": {
+        "nodes": 179,
+        "lines": 2137,
+        "lowered_ops": {
+          "Add": 16,
+          "BatchNormalization": 53,
+          "Conv": 53,
+          "Flatten": 1,
+          "Gemm": 1,
+          "GlobalAveragePool": 1,
+          "Identity": 4,
+          "MaxPool": 1,
+          "Relu": 49
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.384,
+        "verify_seconds": 3.122
+      },
+      "O3": {
+        "nodes": 58,
+        "lines": 1216,
+        "lowered_ops": {
+          "FusedConv": 53,
+          "FusedGemm": 1,
+          "GlobalAveragePool": 1,
+          "MaxPool": 1,
+          "Reshape": 1,
+          "Transpose": 1
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.367,
+        "verify_seconds": 1.546
+      }
+    },
+    "mobilenetv2": {
+      "O0": {
+        "nodes": 152,
+        "lines": 2011,
+        "lowered_ops": {
+          "Add": 10,
+          "BatchNormalization": 52,
+          "Clip": 35,
+          "Conv": 52,
+          "Flatten": 1,
+          "Gemm": 1,
+          "GlobalAveragePool": 1
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.053,
+        "verify_seconds": 1.314
+      },
+      "O3": {
+        "nodes": 56,
+        "lines": 1224,
+        "lowered_ops": {
+          "FusedConv": 52,
+          "FusedGemm": 1,
+          "GlobalAveragePool": 1,
+          "Reshape": 1,
+          "Transpose": 1
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.043,
+        "verify_seconds": 1.077
+      }
+    },
+    "bert-base": {
+      "O0": {
+        "nodes": 927,
+        "lines": 5922,
+        "lowered_ops": {
+          "Add": 172,
+          "Concat": 49,
+          "Div": 49,
+          "Equal": 1,
+          "Erf": 12,
+          "Expand": 1,
+          "Gather": 4,
+          "Gemm": 1,
+          "MatMul": 96,
+          "Mul": 50,
+          "Pow": 25,
+          "ReduceMean": 50,
+          "Reshape": 49,
+          "Shape": 1,
+          "Softmax": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 1,
+          "Transpose": 120,
+          "Unsqueeze": 182,
+          "Where": 1
+        },
+        "fallback_ops": {
+          "ConstantOfShape": 1
+        },
+        "fully_lowered": false,
+        "export_seconds": 5.148,
+        "verify_seconds": 1.75
+      },
+      "O3": {
+        "nodes": 245,
+        "lines": 3469,
+        "lowered_ops": {
+          "FusedElementwise": 1,
+          "FusedGemm": 73,
+          "Gather": 2,
+          "LayerNormalization": 25,
+          "MatMul": 24,
+          "Mul": 12,
+          "Reshape": 48,
+          "Softmax": 12,
+          "Transpose": 48
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.82,
+        "verify_seconds": 1.419
+      }
+    },
+    "gpt2": {
+      "O0": {
+        "nodes": 1296,
+        "lines": 6837,
+        "lowered_ops": {
+          "Add": 111,
+          "Cast": 25,
+          "Concat": 146,
+          "ConstantOfShape": 12,
+          "Div": 37,
+          "Gather": 2,
+          "Gemm": 48,
+          "MatMul": 25,
+          "Mul": 73,
+          "Pow": 49,
+          "ReduceMean": 50,
+          "Reshape": 146,
+          "Softmax": 12,
+          "Split": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 12,
+          "Transpose": 49,
+          "Unsqueeze": 425,
+          "Where": 12
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 4.659,
+        "verify_seconds": 1.088
+      },
+      "O3": {
+        "nodes": 232,
+        "lines": 3132,
+        "lowered_ops": {
+          "Add": 1,
+          "FusedElementwise": 12,
+          "FusedGemm": 49,
+          "Gather": 1,
+          "LayerNormalization": 25,
+          "MatMul": 24,
+          "Reshape": 48,
+          "Softmax": 12,
+          "Split": 12,
+          "Transpose": 48
+        },
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.706,
+        "verify_seconds": 0.83
+      }
+    }
+  },
+  "execute": {
+    "mobilenetv2": {
+      "build_seconds": 31.5,
+      "max_abs_err_vs_ort": 1.049041748046875e-05,
+      "top1_agree": true,
+      "median_ms_single_thread": 584.6000000019558
+    }
+  },
+  "peak_rss_mb": 520.0
+}
