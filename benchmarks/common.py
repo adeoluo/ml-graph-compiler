@@ -72,3 +72,15 @@ def write_result(name: str, payload: dict[str, Any]) -> Path:
     path = RESULTS / f"{name}.json"
     path.write_text(json.dumps(payload, indent=2) + "\n")
     return path
+
+
+def exit_now(code: int = 0) -> None:
+    """Flush and exit without running C++ static destructors.
+
+    onnxruntime 1.31 on macOS can spin for minutes in its telemetry shutdown at interpreter exit
+    (``OneDsTelemetry::Shutdown``), after all results are written. Skipping the destructors
+    avoids that; every script writes and flushes its results before calling this.
+    """
+    sys.stdout.flush()
+    sys.stderr.flush()
+    os._exit(code)
