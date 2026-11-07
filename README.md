@@ -1,4 +1,4 @@
-<h1 align="center">Ml Graph Compiler</h1>
+<h1 align="center">ML Graph Compiler</h1>
 
 <p align="center">
   <em>A deep learning graph compiler: ONNX in, optimized C out.</em>
@@ -45,7 +45,7 @@ Numbers are mean ± 95% confidence interval over N seeds. Full report: [`docs/EV
 ## Quickstart
 
 ```bash
-git clone <repository> && cd Ml Graph Compiler
+git clone <repository> && cd ML Graph Compiler
 cp .env.example .env         # add your keys
 make setup                   # install dependencies + pre-commit
 make test                    # run the test suite
