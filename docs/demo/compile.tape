@@ -9,7 +9,7 @@ Set Theme "Catppuccin Mocha"
 Set TypingSpeed 22ms
 
 Hide
-Type `export PS1='$ ' M=../.bench-data/ml-graph-compiler/models && uv sync -q && source .venv/bin/activate && clear` Enter
+Type `export PS1='$ ' M=../.bench-data/ml-graph-compiler/models && uv sync -q --inexact && source .venv/bin/activate && clear` Enter
 Sleep 8s
 Show
 Type `mgc compile $M/mobilenetv2.onnx --check --bench 50 --threads 4` Enter
