@@ -23,7 +23,7 @@ from typing import Any
 
 import numpy as np
 import onnxruntime as ort
-from common import model_path, peak_rss_mb, write_result
+from common import exit_now, model_path, peak_rss_mb, write_result
 from latency import bootstrap_median_ci, make_input
 
 from ml_graph_compiler.codegen import compile_graph
@@ -194,3 +194,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    exit_now()

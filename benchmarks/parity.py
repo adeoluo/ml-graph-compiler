@@ -22,7 +22,7 @@ from typing import Any
 
 import numpy as np
 import onnxruntime as ort
-from common import DATA, model_path, peak_rss_mb, write_result
+from common import DATA, exit_now, model_path, peak_rss_mb, write_result
 
 from ml_graph_compiler.codegen import compile_model
 from ml_graph_compiler.interpreter import run_graph
@@ -185,3 +185,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    exit_now()

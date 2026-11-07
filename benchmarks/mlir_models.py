@@ -17,7 +17,7 @@ from typing import Any
 
 import numpy as np
 import onnxruntime as ort
-from common import DATA, model_path, peak_rss_mb, write_result
+from common import DATA, exit_now, model_path, peak_rss_mb, write_result
 from latency import make_input
 
 from ml_graph_compiler.mlir import compile_mlir, find_mlir_tools, mlir_verify, to_mlir
@@ -110,3 +110,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    exit_now()

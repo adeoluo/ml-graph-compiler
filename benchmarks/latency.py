@@ -27,7 +27,7 @@ import time
 from typing import Any
 
 import numpy as np
-from common import DATA, model_path, peak_rss_mb, write_result
+from common import DATA, exit_now, model_path, peak_rss_mb, write_result
 
 ENGINES = ("mgc", "ort", "ort-noopt", "torch")
 MODELS = ("resnet50", "mobilenetv2", "bert-base", "gpt2")
@@ -219,3 +219,4 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
+    exit_now()
