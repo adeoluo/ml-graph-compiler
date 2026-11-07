@@ -1,4 +1,4 @@
-# Data Card - Ml Graph Compiler
+# Data Card - ML Graph Compiler
 
 ## Sources & provenance
 - Where each dataset came from (links), collection method, dates.

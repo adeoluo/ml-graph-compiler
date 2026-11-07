@@ -1,6 +1,6 @@
 cff-version: 1.2.0
 message: "If you use this work, please cite it."
-title: "Ml Graph Compiler"
+title: "ML Graph Compiler"
 authors:
   - family-names: "Ogunnoiki"
     given-names: "Adeolu"
