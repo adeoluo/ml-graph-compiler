@@ -1,38 +1,49 @@
----
-title: System Architecture - Ml Graph Compiler
-config:
-  theme: base
-  themeVariables:
-    fontFamily: "Inter, system-ui, sans-serif"
-    primaryColor: "#F8FAFC"
-    primaryBorderColor: "#1E293B"
-    primaryTextColor: "#1E293B"
-    lineColor: "#64748B"
-    clusterBkg: "#E2E8F0"
-    clusterBorder: "#94A3B8"
----
 flowchart LR
+    classDef edge     fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
     classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
     classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
-    classDef external fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
-    classDef danger   fill:#EF4444,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
 
-    User([User]):::external
-
-    subgraph Application["Application Service"]
-        API[API Layer]:::core
-        Core[Core Engine]:::core
-        Evaluation[Evaluation Harness]:::core
+    subgraph Interfaces["Interfaces"]
+        direction TB
+        Model([ONNX model<br/>or bundled sample]):::edge
+        CLI["CLI mgc<br/>optimize, compile"]:::edge
+        API["Library API<br/>compile_model"]:::edge
+        Model --> CLI ~~~ API
     end
 
-    Cache[(Semantic Cache)]:::data
-    Store[(Datastore / Index)]:::data
-    LLM{{LLM Provider}}:::external
+    subgraph Frontend["Frontend (import and IR)"]
+        direction TB
+        Importer["ONNX importer<br/>opsets 11 to 21"]:::core
+        Shapes["Shape inference<br/>partial evaluation"]:::control
+        IR[("SSA graph IR<br/>static shapes")]:::data
+        Registry[("Operator table<br/>types, semantics")]:::data
+        Importer --> Shapes --> IR
+        IR ~~~ Registry
+    end
 
-    User -->|request| API
-    API --> Core
-    Core -->|lookup| Cache
-    Core -->|retrieve| Store
-    Core -->|completion| LLM
-    Core -.->|traces/metrics| Evaluation
-    Core -->|response| User
+    subgraph Optimizer["Optimizer (passes and planning)"]
+        direction TB
+        Manager["Pass manager<br/>O0 to O3 pipelines"]:::control
+        Clean["Fold, DCE, CSE<br/>algebraic simplify"]:::core
+        Fuse["Operator fusion<br/>conv+bn, gemm+gelu"]:::core
+        Layout["NHWC layout<br/>loop fusion"]:::core
+        Sched["Scheduler<br/>memory-aware order"]:::control
+        Planner["Memory planner<br/>liveness, arena reuse"]:::control
+        Manager --> Clean --> Fuse --> Layout --> Sched --> Planner
+    end
+
+    subgraph Backends["Backends and outputs"]
+        direction TB
+        Interp["Reference interpreter<br/>numpy"]:::core
+        CGen["C code generation<br/>clang, NEON, OpenMP"]:::core
+        Lib[("Shared library<br/>packed weights blob")]:::data
+        MLIR["MLIR export<br/>linalg on tensors"]:::obs
+        Bench["Benchmarks<br/>vs ORT, PyTorch"]:::obs
+        Interp ~~~ MLIR ~~~ CGen --> Lib --> Bench
+    end
+
+    Interfaces -->|ONNX| Frontend
+    Frontend -->|typed IR| Optimizer
+    Optimizer -->|plan| Backends
