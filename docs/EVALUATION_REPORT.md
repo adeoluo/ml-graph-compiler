@@ -1,4 +1,4 @@
-# Evaluation Report - Ml Graph Compiler
+# Evaluation Report - ML Graph Compiler
 
 > Reproduce everything here with `make evaluation`. Report mean ± 95% confidence interval over N seeds.
 

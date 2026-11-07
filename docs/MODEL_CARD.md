@@ -1,4 +1,4 @@
-# Model / System Card - Ml Graph Compiler
+# Model / System Card - ML Graph Compiler
 
 ## Overview
 - **What it is:** 1 - 2 sentences.
