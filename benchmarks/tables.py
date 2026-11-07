@@ -59,6 +59,12 @@ def latency() -> None:
         d = load(name)
         if d is not None:
             rows += d["summary"]
+            loads = [c["load_average_1m"] for c in d["cells"] if "load_average_1m" in c]
+            print(
+                f"{name}: {len(d['cells'])} cells, 1 minute load average during the cells "
+                f"min {min(loads):.1f}, median {sorted(loads)[len(loads) // 2]:.1f}, "
+                f"max {max(loads):.1f} (8 cores)"
+            )
     if not rows:
         return
     by = {(r["model"], r["engine"], r["threads"]): r for r in rows}
