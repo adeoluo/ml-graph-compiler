@@ -384,3 +384,13 @@ class Graph:
         lines.append(f"  return {returned}")
         lines.append("}")
         return "\n".join(lines)
+
+
+def comment_text(text: str) -> str:
+    """Make a model-supplied name safe to print inside a C block or MLIR line comment.
+
+    Node and graph names come from the ONNX file. A name containing ``*/`` or a line break could
+    otherwise end the comment and inject code into the generated source.
+    """
+    cleaned = "".join(ch if ch.isprintable() else " " for ch in text)
+    return cleaned.replace("*/", "* /").replace("/*", "/ *")
