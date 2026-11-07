@@ -53,28 +53,52 @@ def parity() -> None:
         )
 
 
+def verdict(a: dict[str, Any] | None, b: dict[str, Any] | None) -> str:
+    """Win or loss only when the two bootstrap 95% intervals of the median do not overlap."""
+    if not a or not b:
+        return "n/a"
+    if a["median_ci95_ms"][1] < b["median_ci95_ms"][0]:
+        return f"win, {b['median_ms'] / a['median_ms']:.2f}x"
+    if b["median_ci95_ms"][1] < a["median_ci95_ms"][0]:
+        return f"loss, {a['median_ms'] / b['median_ms']:.2f}x slower"
+    return "tie"
+
+
 def latency() -> None:
-    rows = []
-    for name in ("latency_cnn", "latency_transformers"):
-        d = load(name)
-        if d is not None:
-            rows += d["summary"]
-            loads = [c["load_average_1m"] for c in d["cells"] if "load_average_1m" in c]
-            print(
-                f"{name}: {len(d['cells'])} cells, 1 minute load average during the cells "
-                f"min {min(loads):.1f}, median {sorted(loads)[len(loads) // 2]:.1f}, "
-                f"max {max(loads):.1f} (8 cores)"
-            )
-    if not rows:
-        return
+    """CNN cells from latency_cnn; transformer cells pooled over every latency_transformers* run."""
+    from latency import summarize
+
+    groups = {"latency_cnn": ["latency_cnn"]}
+    groups["latency_transformers"] = sorted(
+        p.stem for p in RESULTS.glob("latency_transformers*.json")
+    )
+    rows: list[dict[str, Any]] = []
+    for label, names in groups.items():
+        cells = []
+        for name in names:
+            d = load(name)
+            if d is not None:
+                cells += d["cells"]
+        if not cells:
+            continue
+        rows += summarize(cells)
+        loads = [c["load_average_1m"] for c in cells if "load_average_1m" in c]
+        print(
+            f"{label} ({', '.join(names)}): {len(cells)} cells, 1 minute load average during the "
+            f"cells min {min(loads):.1f}, median {sorted(loads)[len(loads) // 2]:.1f}, "
+            f"max {max(loads):.1f} (8 cores)"
+        )
+    max_rounds = {r["model"]: 0 for r in rows}
+    for r in rows:
+        max_rounds[r["model"]] = max(max_rounds[r["model"]], r["rounds"])
     by = {(r["model"], r["engine"], r["threads"]): r for r in rows}
     for threads in (1, 8):
         print(f"\nThreads = {threads}: median ms [95% CI] (peak RSS MB)\n")
         print(
             "| Model | mgc (this) | onnxruntime | onnxruntime, no graph opt "
-            "| PyTorch eager | mgc vs ORT |"
+            "| PyTorch eager | mgc vs ORT | mgc vs PyTorch |"
         )
-        print("|---|---:|---:|---:|---:|---|")
+        print("|---|---:|---:|---:|---:|---|---|")
         for m in MODELS:
             cells = []
             for e in ENGINES:
@@ -84,19 +108,12 @@ def latency() -> None:
                     if r is None
                     else f"{r['median_ms']:.1f} [{r['median_ci95_ms'][0]:.1f}, "
                     f"{r['median_ci95_ms'][1]:.1f}] ({r['peak_rss_mb']:.0f}"
-                    + ("" if r["rounds"] == 3 else f"; {r['rounds']} rounds")
+                    + ("" if r["rounds"] == max_rounds[m] else f"; {r['rounds']} rounds")
                     + ")"
                 )
-            a, b = by.get((m, "mgc", threads)), by.get((m, "ort", threads))
-            verdict = "n/a"
-            if a and b:
-                if a["median_ci95_ms"][1] < b["median_ci95_ms"][0]:
-                    verdict = f"win, {b['median_ms'] / a['median_ms']:.2f}x"
-                elif b["median_ci95_ms"][1] < a["median_ci95_ms"][0]:
-                    verdict = f"loss, {a['median_ms'] / b['median_ms']:.2f}x slower"
-                else:
-                    verdict = "tie (CIs overlap)"
-            print(f"| {LABEL[m]} | " + " | ".join(cells) + f" | {verdict} |")
+            mine = by.get((m, "mgc", threads))
+            verdicts = [verdict(mine, by.get((m, e, threads))) for e in ("ort", "torch")]
+            print(f"| {LABEL[m]} | " + " | ".join(cells + verdicts) + " |")
 
 
 def load_ablation() -> dict[str, Any] | None:
@@ -175,7 +192,7 @@ def mlir() -> None:
                 print(f"| {LABEL[m]} | {level} | | | | no: {r['error'][:60]} |")
                 continue
             left = ", ".join(f"{k} x{v}" for k, v in r["fallback_ops"].items()) or "none"
-            print(f"| {LABEL[m]} | {level} | {r['nodes']} | {r['lines']:,} | {left} | yes |")
+            print(f"| {LABEL[m]} | {level} | {r['nodes']:,} | {r['lines']:,} | {left} | yes |")
     rows = d.get("execute", {})
     if rows:
         print(
