@@ -652,3 +652,23 @@ def test_compile_errors_are_reported(cache: Path) -> None:
 
     with pytest.raises(CodegenError, match="compilation failed"):
         build_library("this is not C", cache_dir=cache)
+
+
+def _hostile_names_model() -> onnx.ModelProto:
+    hostile = "relu */ int injected = 1; /* \n#include <stdlib.h>\n"
+    x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [2, 3])
+    y = helper.make_tensor_value_info("y", TensorProto.FLOAT, [2, 3])
+    node = helper.make_node("Relu", ["x"], ["y"], name=hostile)
+    graph = helper.make_graph([node], "g */ int g_injected; /*", [x], [y])
+    return helper.make_model(graph, opset_imports=[helper.make_opsetid("", 14)])
+
+
+def test_hostile_node_and_graph_names_cannot_escape_c_comments(tmp_path: Path) -> None:
+    graph = from_onnx(_hostile_names_model())
+    source = generate_c(graph).source
+    assert "*/ int injected" not in source
+    assert "*/ int g_injected" not in source
+    assert "\n#include <stdlib.h>" not in source
+    compiled = compile_graph(graph, cache_dir=tmp_path)
+    x = rng.standard_normal((2, 3)).astype(np.float32)
+    np.testing.assert_array_equal(compiled.run({"x": x})["y"], np.maximum(x, 0))

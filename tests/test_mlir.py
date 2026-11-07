@@ -473,3 +473,18 @@ def test_cli_writes_and_verifies(tmp_path: Path, capsys: pytest.CaptureFixture[s
 def test_cli_prints_without_tools(capsys: pytest.CaptureFixture[str]) -> None:
     assert main(["mlir", "mlp", "--dialect", "mgc"]) == 0
     assert "func.func @main" in capsys.readouterr().out
+
+
+def test_hostile_names_cannot_break_mlir_line_comments() -> None:
+    from onnx import helper
+
+    x = helper.make_tensor_value_info("x", TensorProto.FLOAT, [2, 3])
+    y = helper.make_tensor_value_info("y", TensorProto.FLOAT, [2, 3])
+    node = helper.make_node("Relu", ["x"], ["y"], name="r\nfunc.func @evil() {")
+    model = helper.make_model(
+        helper.make_graph([node], "g\nmodule {", [x], [y]),
+        opset_imports=[helper.make_opsetid("", 14)],
+    )
+    text = to_mlir(from_onnx(model)).text
+    assert "\nfunc.func @evil" not in text
+    assert "\nmodule {" not in text

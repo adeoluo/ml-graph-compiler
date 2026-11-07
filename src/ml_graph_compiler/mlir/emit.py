@@ -13,7 +13,7 @@ import numpy as np
 
 from ml_graph_compiler import ops
 from ml_graph_compiler.errors import CodegenError
-from ml_graph_compiler.ir import Graph, Node, TensorType, Value, numpy_dtype
+from ml_graph_compiler.ir import Graph, Node, TensorType, Value, comment_text, numpy_dtype
 
 ELEMENT_TYPES = {
     "float32": "f32",
@@ -490,7 +490,7 @@ class Emitter:
         self.names[id(value)] = name
 
     def node(self, node: Node) -> None:
-        self.emit(f"// {node.op} {node.name}")
+        self.emit(f"// {node.op} {comment_text(node.name)}")
         if not self.lower:
             self.opaque(node)
             return
@@ -1376,7 +1376,7 @@ class Emitter:
         inputs_doc = ", ".join(f"{_ident(v.name)}" for v in g.inputs)
         outputs_doc = ", ".join(_ident(n) for n, _ in outs)
         head = [
-            f"// graph {g.name}: inputs ({inputs_doc}) outputs ({outputs_doc})",
+            f"// graph {comment_text(g.name)}: inputs ({inputs_doc}) outputs ({outputs_doc})",
             f"func.func @main({', '.join(args)}) -> ({result_types}) "
             "attributes {llvm.emit_c_interface} {",
         ]
