@@ -86,30 +86,36 @@ def latency_study(models: list[str], configs: list[str], rounds: int, repeat: in
         x = make_input(model)
         ref = reference(model, x)
         out[model] = {}
-        compiled_models = {}
-        for config in configs:
-            try:
-                compiled, info = compile_config(model, config)
-            except Exception as exc:  # recorded, not hidden: some passes are prerequisites
-                out[model][config] = {"error": f"{type(exc).__name__}: {exc}"[:500]}
-                print(f"{model} {config}: {out[model][config]['error']}", flush=True)
-                continue
-            feeds = {compiled.inputs[0][0]: x}
-            got = compiled.run(feeds)
-            info["max_abs_err_vs_ort"] = max(
-                float(np.abs(got[k] - ref[k]).max()) for k in ref if k in got
-            )
-            info["samples_ms"] = {"1": [], "8": []}
-            out[model][config] = info
-            compiled_models[config] = (compiled, feeds)
-        for _ in range(rounds):
-            for config, (compiled, feeds) in compiled_models.items():
+        # One compiled model alive at a time: the transformer weight blobs are ~0.5 GB each, so
+        # every round recompiles (the clang build is cached) instead of keeping all configs.
+        for r in range(rounds):
+            for config in configs:
+                if r > 0 and "error" in out[model][config]:
+                    continue
+                try:
+                    compiled, info = compile_config(model, config)
+                except Exception as exc:  # recorded, not hidden: some passes are prerequisites
+                    out[model][config] = {"error": f"{type(exc).__name__}: {exc}"[:500]}
+                    print(f"{model} {config}: {out[model][config]['error']}", flush=True)
+                    continue
+                feeds = {compiled.inputs[0][0]: x}
+                if r == 0:
+                    got = compiled.run(feeds)
+                    info["max_abs_err_vs_ort"] = max(
+                        float(np.abs(got[k] - ref[k]).max()) for k in ref if k in got
+                    )
+                    info["samples_ms"] = {"1": [], "8": []}
+                    out[model][config] = info
                 for threads in (1, 8):
                     out[model][config]["samples_ms"][str(threads)] += time_runs(
                         compiled, feeds, threads, repeat
                     )
-        for config in compiled_models:
+                del compiled, feeds
+                gc.collect()
+        for config in configs:
             info = out[model][config]
+            if "error" in info:
+                continue
             for threads in ("1", "8"):
                 s = np.array(info["samples_ms"][threads])
                 lo, hi = bootstrap_median_ci(s)
@@ -122,7 +128,6 @@ def latency_study(models: list[str], configs: list[str], rounds: int, repeat: in
                 f"err {info['max_abs_err_vs_ort']:.2e}",
                 flush=True,
             )
-        del compiled_models
         gc.collect()
     return out
 
