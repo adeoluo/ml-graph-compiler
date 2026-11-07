@@ -83,7 +83,9 @@ def latency() -> None:
                     "n/a"
                     if r is None
                     else f"{r['median_ms']:.1f} [{r['median_ci95_ms'][0]:.1f}, "
-                    f"{r['median_ci95_ms'][1]:.1f}] ({r['peak_rss_mb']:.0f})"
+                    f"{r['median_ci95_ms'][1]:.1f}] ({r['peak_rss_mb']:.0f}"
+                    + ("" if r["rounds"] == 3 else f"; {r['rounds']} rounds")
+                    + ")"
                 )
             a, b = by.get((m, "mgc", threads)), by.get((m, "ort", threads))
             verdict = "n/a"
@@ -97,8 +99,22 @@ def latency() -> None:
             print(f"| {LABEL[m]} | " + " | ".join(cells) + f" | {verdict} |")
 
 
+def load_ablation() -> dict[str, Any] | None:
+    """Merge the per-model-group ablation files (ablation_cnn, ablation_transformers)."""
+    merged: dict[str, Any] = {}
+    for name in ("ablation", "ablation_cnn", "ablation_transformers"):
+        d = load(name)
+        if d is None:
+            continue
+        for key in ("cumulative", "leave_one_out"):
+            merged.setdefault(key, {}).update(d.get(key, {}))
+        if "memory" in d:
+            merged.setdefault("memory", {}).update(d["memory"])
+    return merged or None
+
+
 def ablation() -> None:
-    d = load("ablation")
+    d = load_ablation()
     if d is None:
         return
     for study in ("cumulative", "leave_one_out"):
@@ -125,7 +141,7 @@ def ablation() -> None:
 
 
 def memory() -> None:
-    d = load("ablation")
+    d = load_ablation()
     if d is None or "memory" not in d:
         return
     print("\nArena MB by planner (scheduled graph, O3)\n")

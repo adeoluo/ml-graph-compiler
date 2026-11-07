@@ -1,0 +1,1581 @@
+{
+  "machine": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14",
+    "cpus": 8,
+    "load_average_1m": 17.3,
+    "cpu": "Apple M1",
+    "memory_gb": 8.0
+  },
+  "timestamp": "2026-11-07 03:02:10",
+  "args": {
+    "worker": null,
+    "models": [
+      "bert-base",
+      "gpt2"
+    ],
+    "engines": [
+      "mgc",
+      "ort",
+      "ort-noopt",
+      "torch"
+    ],
+    "threads": [
+      1,
+      8
+    ],
+    "rounds": 3,
+    "warmup": 3,
+    "repeat": 10,
+    "name": "latency_transformers"
+  },
+  "summary": [
+    {
+      "model": "bert-base",
+      "engine": "mgc",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 2003.7905,
+      "median_ci95_ms": [
+        574.4490000000001,
+        3848.358
+      ],
+      "p90_ms": 8533.607,
+      "best_round_median_ms": 473.8981875125319,
+      "peak_rss_mb": 559.7,
+      "rss_delta_mb": 529.9000000000001
+    },
+    {
+      "model": "bert-base",
+      "engine": "mgc",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 444.30449999999996,
+      "median_ci95_ms": [
+        301.4005,
+        3054.7415
+      ],
+      "p90_ms": 5043.323200000001,
+      "best_round_median_ms": 196.02393748937175,
+      "peak_rss_mb": 569.2,
+      "rss_delta_mb": 538.5
+    },
+    {
+      "model": "bert-base",
+      "engine": "ort",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 549.8005,
+      "median_ci95_ms": [
+        484.282,
+        795.749
+      ],
+      "p90_ms": 1790.730400000001,
+      "best_round_median_ms": 467.19395800027996,
+      "peak_rss_mb": 457.1,
+      "rss_delta_mb": 426.6
+    },
+    {
+      "model": "bert-base",
+      "engine": "ort",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 1160.31,
+      "median_ci95_ms": [
+        838.6134999999999,
+        1454.0115
+      ],
+      "p90_ms": 2245.1307000000006,
+      "best_round_median_ms": 368.3534590090858,
+      "peak_rss_mb": 405.6,
+      "rss_delta_mb": 377.3
+    },
+    {
+      "model": "bert-base",
+      "engine": "ort-noopt",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 1135.01,
+      "median_ci95_ms": [
+        858.338,
+        1456.151537499991
+      ],
+      "p90_ms": 2464.1353000000004,
+      "best_round_median_ms": 858.3380829950329,
+      "peak_rss_mb": 614.7,
+      "rss_delta_mb": 584.2
+    },
+    {
+      "model": "bert-base",
+      "engine": "ort-noopt",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 1517.2955,
+      "median_ci95_ms": [
+        1275.1680000000001,
+        3286.854
+      ],
+      "p90_ms": 13881.909300000008,
+      "best_round_median_ms": 1199.7685419919435,
+      "peak_rss_mb": 551.8,
+      "rss_delta_mb": 521.0999999999999
+    },
+    {
+      "model": "bert-base",
+      "engine": "torch",
+      "threads": 1,
+      "rounds": 2,
+      "median_ms": 801.8705,
+      "median_ci95_ms": [
+        84.301,
+        2948.406
+      ],
+      "p90_ms": 4069.0499000000004,
+      "best_round_median_ms": 81.84710401110351,
+      "peak_rss_mb": 399.55,
+      "rss_delta_mb": 369.0
+    },
+    {
+      "model": "bert-base",
+      "engine": "torch",
+      "threads": 8,
+      "rounds": 2,
+      "median_ms": 111.3815,
+      "median_ci95_ms": [
+        85.86,
+        468.0475
+      ],
+      "p90_ms": 1404.5739000000008,
+      "best_round_median_ms": 84.45010449213441,
+      "peak_rss_mb": 390.95,
+      "rss_delta_mb": 360.55
+    },
+    {
+      "model": "gpt2",
+      "engine": "mgc",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 7771.5064999999995,
+      "median_ci95_ms": [
+        3053.479,
+        9004.913499999999
+      ],
+      "p90_ms": 13809.212800000001,
+      "best_round_median_ms": 1400.2971454901854,
+      "peak_rss_mb": 967.6,
+      "rss_delta_mb": 937.0
+    },
+    {
+      "model": "gpt2",
+      "engine": "mgc",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 189.123,
+      "median_ci95_ms": [
+        169.847,
+        216.1955
+      ],
+      "p90_ms": 635.2055000000007,
+      "best_round_median_ms": 155.47912499459926,
+      "peak_rss_mb": 587.6,
+      "rss_delta_mb": 557.0
+    },
+    {
+      "model": "gpt2",
+      "engine": "ort",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 2167.7475,
+      "median_ci95_ms": [
+        1761.3955,
+        3740.887
+      ],
+      "p90_ms": 6008.172100000001,
+      "best_round_median_ms": 986.8780624965439,
+      "peak_rss_mb": 664.4,
+      "rss_delta_mb": 633.8
+    },
+    {
+      "model": "gpt2",
+      "engine": "ort",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 368.7845,
+      "median_ci95_ms": [
+        312.653,
+        438.4615
+      ],
+      "p90_ms": 741.6896,
+      "best_round_median_ms": 263.55799999146257,
+      "peak_rss_mb": 631.8,
+      "rss_delta_mb": 601.3
+    },
+    {
+      "model": "gpt2",
+      "engine": "ort-noopt",
+      "threads": 1,
+      "rounds": 3,
+      "median_ms": 2171.3995,
+      "median_ci95_ms": [
+        911.892,
+        6058.2345000000005
+      ],
+      "p90_ms": 17356.8908,
+      "best_round_median_ms": 857.4060419923626,
+      "peak_rss_mb": 660.2,
+      "rss_delta_mb": 632.3000000000001
+    },
+    {
+      "model": "gpt2",
+      "engine": "ort-noopt",
+      "threads": 8,
+      "rounds": 3,
+      "median_ms": 830.8785,
+      "median_ci95_ms": [
+        488.5625,
+        1020.9295
+      ],
+      "p90_ms": 2430.0798000000004,
+      "best_round_median_ms": 334.9326040042797,
+      "peak_rss_mb": 690.5,
+      "rss_delta_mb": 660.0
+    },
+    {
+      "model": "gpt2",
+      "engine": "torch",
+      "threads": 1,
+      "rounds": 2,
+      "median_ms": 2229.7505,
+      "median_ci95_ms": [
+        1630.88,
+        3169.4
+      ],
+      "p90_ms": 3833.4857,
+      "best_round_median_ms": 1516.7982084822142,
+      "peak_rss_mb": 543.4,
+      "rss_delta_mb": 512.8
+    },
+    {
+      "model": "gpt2",
+      "engine": "torch",
+      "threads": 8,
+      "rounds": 2,
+      "median_ms": 2728.9809999999998,
+      "median_ci95_ms": [
+        2211.62,
+        3456.7465
+      ],
+      "p90_ms": 4378.159200000002,
+      "best_round_median_ms": 2182.548354001483,
+      "peak_rss_mb": 409.75,
+      "rss_delta_mb": 379.4
+    }
+  ],
+  "cells": [
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 31.644,
+      "median_ms": 5038.050957999076,
+      "p10_ms": 552.0947169017745,
+      "p90_ms": 12552.095466596074,
+      "median_ci95_ms": [
+        814.8712080146652,
+        8886.077978997491
+      ],
+      "samples_ms": [
+        8749.13,
+        12498.176,
+        13037.37,
+        8509.66,
+        5273.98,
+        3996.647,
+        4802.122,
+        814.871,
+        553.052,
+        543.478
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 348.4,
+      "load_average_1m": 9.11,
+      "round": 0
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 2.019,
+      "median_ms": 1184.1830214980291,
+      "p10_ms": 746.9427960808389,
+      "p90_ms": 3602.8951374930325,
+      "median_ci95_ms": [
+        795.3017910185736,
+        2577.5214999885065
+      ],
+      "samples_ms": [
+        1346.612,
+        1718.335,
+        2442.289,
+        5098.582,
+        3436.708,
+        1021.754,
+        796.196,
+        795.302,
+        733.864,
+        748.396
+      ],
+      "rss_before_load_mb": 28.0,
+      "peak_rss_mb": 553.0,
+      "load_average_1m": 9.26,
+      "round": 0
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 1.631,
+      "median_ms": 1850.8457915013423,
+      "p10_ms": 1100.594495801488,
+      "p90_ms": 2785.842245508684,
+      "median_ci95_ms": [
+        1406.8105625046883,
+        2771.614041994326
+      ],
+      "samples_ms": [
+        2771.614,
+        1707.674,
+        1744.196,
+        1105.947,
+        1052.424,
+        2096.216,
+        1578.911,
+        2820.458,
+        1957.495,
+        2781.996
+      ],
+      "rss_before_load_mb": 27.4,
+      "peak_rss_mb": 497.7,
+      "load_average_1m": 11.07,
+      "round": 0
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 14.17,
+      "median_ms": 3353.933603997575,
+      "p10_ms": 2616.348116705194,
+      "p90_ms": 4364.825287504936,
+      "median_ci95_ms": [
+        2774.8410000058357,
+        4132.601895995322
+      ],
+      "samples_ms": [
+        4052.487,
+        2743.19,
+        2846.091,
+        4218.116,
+        4047.088,
+        5685.209,
+        3050.721,
+        2774.841,
+        3657.146,
+        1474.773
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 390.0,
+      "load_average_1m": 23.17,
+      "round": 0
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 37.464,
+      "median_ms": 11024.700416513951,
+      "p10_ms": 7385.8274208934745,
+      "p90_ms": 17612.00664518692,
+      "median_ci95_ms": [
+        8322.473875014111,
+        14508.029103992158
+      ],
+      "samples_ms": [
+        11503.494,
+        12226.052,
+        12633.239,
+        10545.907,
+        17512.564,
+        7615.394,
+        9619.203,
+        18506.988,
+        8322.474,
+        5319.729
+      ],
+      "rss_before_load_mb": 27.7,
+      "peak_rss_mb": 696.6,
+      "load_average_1m": 18.9,
+      "round": 0
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 4.922,
+      "median_ms": 986.8780624965439,
+      "p10_ms": 825.522766719223,
+      "p90_ms": 7112.496166018533,
+      "median_ci95_ms": [
+        834.2371660110075,
+        4809.132125024917
+      ],
+      "samples_ms": [
+        4809.132,
+        921.566,
+        960.769,
+        833.544,
+        834.237,
+        753.333,
+        1012.987,
+        3233.127,
+        6088.894,
+        16324.915
+      ],
+      "rss_before_load_mb": 28.5,
+      "peak_rss_mb": 467.9,
+      "load_average_1m": 22.07,
+      "round": 0
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 2.85,
+      "median_ms": 857.4060419923626,
+      "p10_ms": 539.6354621974751,
+      "p90_ms": 1490.3333922935415,
+      "median_ci95_ms": [
+        645.1151665096404,
+        1170.2887504943646
+      ],
+      "samples_ms": [
+        444.97,
+        550.154,
+        812.973,
+        740.077,
+        667.498,
+        901.839,
+        1119.929,
+        1040.5,
+        1438.738,
+        1954.69
+      ],
+      "rss_before_load_mb": 27.9,
+      "peak_rss_mb": 660.2,
+      "load_average_1m": 19.1,
+      "round": 0
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 1,
+      "error": "Traceback (most recent call last):\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 221, in <module>\n    main()\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 196, in main\n    print(json.dumps(worker(engine, model, int(threads), args.warmup, args.repeat)))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 115, in worker\n    run = load_runner(engine, model, threads)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 79, in load_runner\n    import torch\nModuleNotFoundError: No module named 'torch'\n",
+      "round": 0
+    },
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 41.444,
+      "median_ms": 4576.182375007193,
+      "p10_ms": 3325.8392963994993,
+      "p90_ms": 6248.2542243931675,
+      "median_ci95_ms": [
+        3846.3865215016995,
+        5718.5769580246415
+      ],
+      "samples_ms": [
+        3358.78,
+        4333.993,
+        3029.376,
+        4968.295,
+        6458.633,
+        6224.879,
+        4533.217,
+        5718.577,
+        4173.066,
+        4619.148
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 395.2,
+      "load_average_1m": 118.23,
+      "round": 0
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 4.323,
+      "median_ms": 1585.1830000174232,
+      "p10_ms": 1114.6551209123572,
+      "p90_ms": 2258.5124460980296,
+      "median_ci95_ms": [
+        1149.0659579867497,
+        2114.886583003681
+      ],
+      "samples_ms": [
+        858.38,
+        1599.925,
+        2770.07,
+        2114.887,
+        1668.334,
+        1268.908,
+        1143.13,
+        2201.673,
+        1570.441,
+        1149.066
+      ],
+      "rss_before_load_mb": 28.3,
+      "peak_rss_mb": 405.6,
+      "load_average_1m": 117.23,
+      "round": 0
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 1.873,
+      "median_ms": 4771.378145989729,
+      "p10_ms": 1544.5673709007679,
+      "p90_ms": 21217.803912507952,
+      "median_ci95_ms": [
+        2419.1194999875734,
+        18494.690708001144
+      ],
+      "samples_ms": [
+        4794.673,
+        3286.854,
+        4748.083,
+        13369.378,
+        23254.739,
+        20991.478,
+        18494.691,
+        1483.206,
+        2582.004,
+        1551.385
+      ],
+      "rss_before_load_mb": 28.7,
+      "peak_rss_mb": 530.8,
+      "load_average_1m": 61.64,
+      "round": 0
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 8,
+      "error": "Traceback (most recent call last):\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 221, in <module>\n    main()\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 196, in main\n    print(json.dumps(worker(engine, model, int(threads), args.warmup, args.repeat)))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 115, in worker\n    run = load_runner(engine, model, threads)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 79, in load_runner\n    import torch\nModuleNotFoundError: No module named 'torch'\n",
+      "round": 0
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 31.456,
+      "median_ms": 155.47912499459926,
+      "p10_ms": 151.6776130971266,
+      "p90_ms": 167.7104913862422,
+      "median_ci95_ms": [
+        153.2983959914418,
+        165.65800001262687
+      ],
+      "samples_ms": [
+        155.056,
+        151.825,
+        166.479,
+        164.408,
+        150.355,
+        154.772,
+        165.658,
+        154.685,
+        155.902,
+        178.792
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 587.6,
+      "load_average_1m": 41.13,
+      "round": 0
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 1.644,
+      "median_ms": 263.55799999146257,
+      "p10_ms": 195.72772140963934,
+      "p90_ms": 344.03349560161587,
+      "median_ci95_ms": [
+        204.44020797731355,
+        313.5475410090294
+      ],
+      "samples_ms": [
+        170.992,
+        204.44,
+        370.048,
+        198.476,
+        273.99,
+        211.89,
+        277.986,
+        341.143,
+        253.126,
+        313.548
+      ],
+      "rss_before_load_mb": 30.7,
+      "peak_rss_mb": 792.5,
+      "load_average_1m": 38.48,
+      "round": 0
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 0.659,
+      "median_ms": 334.9326040042797,
+      "p10_ms": 280.748283691355,
+      "p90_ms": 600.0249829987296,
+      "median_ci95_ms": [
+        300.028208992444,
+        461.27610400435515
+      ],
+      "samples_ms": [
+        303.428,
+        317.506,
+        352.359,
+        375.049,
+        570.193,
+        868.51,
+        406.932,
+        283.99,
+        300.028,
+        251.574
+      ],
+      "rss_before_load_mb": 30.4,
+      "peak_rss_mb": 919.5,
+      "load_average_1m": 34.05,
+      "round": 0
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 8,
+      "error": "Traceback (most recent call last):\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 221, in <module>\n    main()\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 196, in main\n    print(json.dumps(worker(engine, model, int(threads), args.warmup, args.repeat)))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 115, in worker\n    run = load_runner(engine, model, threads)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 79, in load_runner\n    import torch\nModuleNotFoundError: No module named 'torch'\n",
+      "round": 0
+    },
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 4.769,
+      "median_ms": 473.8981875125319,
+      "p10_ms": 407.6421497069532,
+      "p90_ms": 647.0891836099324,
+      "median_ci95_ms": [
+        443.6744370032102,
+        553.9877710107248
+      ],
+      "samples_ms": [
+        352.262,
+        469.498,
+        595.846,
+        514.887,
+        413.795,
+        474.243,
+        1108.274,
+        473.553,
+        512.129,
+        454.446
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 873.9,
+      "load_average_1m": 29.5,
+      "round": 1
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 2.832,
+      "median_ms": 492.4802500026999,
+      "p10_ms": 341.3498997048009,
+      "p90_ms": 869.8040958988713,
+      "median_ci95_ms": [
+        344.74283299641684,
+        738.0252919974737
+      ],
+      "samples_ms": [
+        491.305,
+        344.743,
+        338.286,
+        341.69,
+        493.656,
+        878.768,
+        738.025,
+        543.587,
+        396.432,
+        868.808
+      ],
+      "rss_before_load_mb": 30.3,
+      "peak_rss_mb": 397.9,
+      "load_average_1m": 24.91,
+      "round": 1
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 1.441,
+      "median_ms": 902.0880419993773,
+      "p10_ms": 653.5636621905724,
+      "p90_ms": 1440.1528544898606,
+      "median_ci95_ms": [
+        677.5385420187376,
+        1211.092354496941
+      ],
+      "samples_ms": [
+        677.539,
+        1330.173,
+        2429.971,
+        1092.012,
+        712.164,
+        608.112,
+        696.238,
+        658.614,
+        1131.291,
+        1138.729
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 892.0,
+      "load_average_1m": 22.23,
+      "round": 1
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 1,
+      "error": "Traceback (most recent call last):\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 221, in <module>\n    main()\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 196, in main\n    print(json.dumps(worker(engine, model, int(threads), args.warmup, args.repeat)))\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 115, in worker\n    run = load_runner(engine, model, threads)\n          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/ade/Desktop/Projects/ml-graph-compiler/benchmarks/latency.py\", line 79, in load_runner\n    import torch\nModuleNotFoundError: No module named 'torch'\n",
+      "round": 1
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 9.954,
+      "median_ms": 1400.2971454901854,
+      "p10_ms": 1171.0519036045298,
+      "p90_ms": 1794.805783094489,
+      "median_ci95_ms": [
+        1253.824249986792,
+        1697.4912919977214
+      ],
+      "samples_ms": [
+        2038.456,
+        1767.734,
+        1697.491,
+        1178.636,
+        1102.795,
+        1447.519,
+        1253.824,
+        1562.641,
+        1317.592,
+        1353.075
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 968.7,
+      "load_average_1m": 15.37,
+      "round": 1
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 3.769,
+      "median_ms": 2871.9264170067618,
+      "p10_ms": 2054.7364747006213,
+      "p90_ms": 6396.9831541122385,
+      "median_ci95_ms": [
+        2136.7472920101136,
+        5931.957749999128
+      ],
+      "samples_ms": [
+        2198.748,
+        2075.644,
+        2404.406,
+        3339.447,
+        2136.747,
+        1866.568,
+        4174.588,
+        5999.203,
+        5931.958,
+        9977.006
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 664.4,
+      "load_average_1m": 32.06,
+      "round": 1
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 4.446,
+      "median_ms": 1655.0273750035558,
+      "p10_ms": 502.99289550748654,
+      "p90_ms": 15893.971604207763,
+      "median_ci95_ms": [
+        581.1612080142368,
+        9584.926541501773
+      ],
+      "samples_ms": [
+        15743.775,
+        3426.078,
+        2388.109,
+        17245.742,
+        5489.733,
+        921.945,
+        682.423,
+        581.161,
+        503.918,
+        494.665
+      ],
+      "rss_before_load_mb": 27.7,
+      "peak_rss_mb": 677.2,
+      "load_average_1m": 24.07,
+      "round": 1
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 8.981,
+      "median_ms": 1516.7982084822142,
+      "p10_ms": 311.46499970636796,
+      "p90_ms": 3599.2641208838895,
+      "median_ci95_ms": [
+        389.24049999332055,
+        2982.925124990288
+      ],
+      "samples_ms": [
+        1965.963,
+        1067.634,
+        2495.782,
+        5614.324,
+        3375.369,
+        2982.925,
+        1020.648,
+        389.24,
+        319.346,
+        240.534
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 577.4,
+      "load_average_1m": 38.7,
+      "round": 1
+    },
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 13.994,
+      "median_ms": 196.02393748937175,
+      "p10_ms": 137.92124579485971,
+      "p90_ms": 267.6583213993581,
+      "median_ci95_ms": [
+        161.19312500813976,
+        249.63427099282853
+      ],
+      "samples_ms": [
+        124.912,
+        139.367,
+        281.201,
+        266.154,
+        200.777,
+        188.14,
+        239.155,
+        191.271,
+        161.193,
+        233.115
+      ],
+      "rss_before_load_mb": 30.7,
+      "peak_rss_mb": 569.2,
+      "load_average_1m": 32.51,
+      "round": 1
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 1.864,
+      "median_ms": 368.3534590090858,
+      "p10_ms": 270.8798127976479,
+      "p90_ms": 1146.8421791796566,
+      "median_ci95_ms": [
+        276.4598749927245,
+        803.7926249962766
+      ],
+      "samples_ms": [
+        2636.25,
+        981.352,
+        803.793,
+        616.541,
+        346.487,
+        247.41,
+        276.46,
+        273.488,
+        390.22,
+        297.314
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 551.5,
+      "load_average_1m": 31.7,
+      "round": 1
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 1.18,
+      "median_ms": 1362.9549789911835,
+      "p10_ms": 1017.3340290872147,
+      "p90_ms": 4953.816737511078,
+      "median_ci95_ms": [
+        1056.321250012843,
+        3250.879333514604
+      ],
+      "samples_ms": [
+        1330.727,
+        4776.535,
+        1308.32,
+        1021.211,
+        982.441,
+        6549.352,
+        1725.224,
+        1056.321,
+        2353.356,
+        1395.183
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 607.7,
+      "load_average_1m": 30.3,
+      "round": 1
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 9.266,
+      "median_ms": 785.438395498204,
+      "p10_ms": 111.88525830511935,
+      "p90_ms": 1912.3176961002168,
+      "median_ci95_ms": [
+        142.38395800930448,
+        1456.0999374953099
+      ],
+      "samples_ms": [
+        775.062,
+        1359.402,
+        2823.089,
+        1811.121,
+        1101.079,
+        795.815,
+        161.033,
+        142.384,
+        113.852,
+        94.189
+      ],
+      "rss_before_load_mb": 30.4,
+      "peak_rss_mb": 380.4,
+      "load_average_1m": 25.1,
+      "round": 1
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 17.369,
+      "median_ms": 472.50112499750685,
+      "p10_ms": 190.7640541845467,
+      "p90_ms": 1874.4711625098712,
+      "median_ci95_ms": [
+        215.7292499905452,
+        1179.4492085027741
+      ],
+      "samples_ms": [
+        2792.361,
+        586.415,
+        395.15,
+        1772.483,
+        1074.32,
+        549.852,
+        193.499,
+        166.153,
+        215.729,
+        267.036
+      ],
+      "rss_before_load_mb": 28.6,
+      "peak_rss_mb": 835.2,
+      "load_average_1m": 38.63,
+      "round": 1
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 2.908,
+      "median_ms": 687.5997080060188,
+      "p10_ms": 460.7760872109793,
+      "p90_ms": 799.472679104656,
+      "median_ci95_ms": [
+        511.6422919963952,
+        767.0122919953428
+      ],
+      "samples_ms": [
+        554.503,
+        470.23,
+        740.05,
+        793.975,
+        511.642,
+        848.954,
+        756.446,
+        696.044,
+        679.155,
+        375.69
+      ],
+      "rss_before_load_mb": 30.7,
+      "peak_rss_mb": 608.0,
+      "load_average_1m": 32.54,
+      "round": 1
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 1.418,
+      "median_ms": 760.4503125039628,
+      "p10_ms": 355.6614916975377,
+      "p90_ms": 1318.0098628014089,
+      "median_ci95_ms": [
+        522.5640415010275,
+        1116.6849795117741
+      ],
+      "samples_ms": [
+        606.575,
+        2476.392,
+        793.247,
+        366.239,
+        260.462,
+        678.889,
+        727.654,
+        1189.301,
+        1079.118,
+        1044.069
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 690.5,
+      "load_average_1m": 30.15,
+      "round": 1
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 6.725,
+      "median_ms": 3456.746875002864,
+      "p10_ms": 2801.407437204034,
+      "p90_ms": 5236.812212518998,
+      "median_ci95_ms": [
+        2982.6235829968937,
+        4483.6415000172565
+      ],
+      "samples_ms": [
+        5401.136,
+        5218.554,
+        4284.782,
+        2982.624,
+        3587.699,
+        3748.729,
+        2638.448,
+        2819.514,
+        3325.794,
+        3315.015
+      ],
+      "rss_before_load_mb": 30.3,
+      "peak_rss_mb": 362.5,
+      "load_average_1m": 35.87,
+      "round": 1
+    },
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 6.979,
+      "median_ms": 2614.935333491303,
+      "p10_ms": 1948.8863755890634,
+      "p90_ms": 7423.0121164087905,
+      "median_ci95_ms": [
+        2033.0303749942686,
+        5558.805104010389
+      ],
+      "samples_ms": [
+        1974.551,
+        1717.902,
+        2033.03,
+        7472.246,
+        7417.542,
+        2727.749,
+        2399.676,
+        2502.122,
+        5080.69,
+        3700.069
+      ],
+      "rss_before_load_mb": 29.8,
+      "peak_rss_mb": 559.7,
+      "load_average_1m": 23.81,
+      "round": 2
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 2.163,
+      "median_ms": 467.19395800027996,
+      "p10_ms": 362.3847044073045,
+      "p90_ms": 638.6015627998855,
+      "median_ci95_ms": [
+        403.10743800364435,
+        506.29531250160653
+      ],
+      "samples_ms": [
+        556.014,
+        432.466,
+        366.196,
+        328.087,
+        1381.888,
+        490.753,
+        502.305,
+        477.811,
+        440.019,
+        456.576
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 457.1,
+      "load_average_1m": 20.93,
+      "round": 2
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 1.041,
+      "median_ms": 858.3380829950329,
+      "p10_ms": 584.719470483833,
+      "p90_ms": 1351.507404219592,
+      "median_ci95_ms": [
+        594.567874999484,
+        1298.329624987673
+      ],
+      "samples_ms": [
+        514.442,
+        596.955,
+        594.568,
+        592.528,
+        915.326,
+        1170.425,
+        801.35,
+        1329.852,
+        1546.406,
+        1298.33
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 614.7,
+      "load_average_1m": 18.33,
+      "round": 2
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 1,
+      "load_seconds": 5.009,
+      "median_ms": 81.84710401110351,
+      "p10_ms": 72.81658330757637,
+      "p90_ms": 128.57733329001348,
+      "median_ci95_ms": [
+        76.10842011272325,
+        122.10658300318755
+      ],
+      "samples_ms": [
+        81.685,
+        86.592,
+        128.968,
+        128.534,
+        122.107,
+        76.132,
+        82.01,
+        77.218,
+        70.023,
+        73.127
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 409.1,
+      "load_average_1m": 16.55,
+      "round": 2
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 8.974,
+      "median_ms": 8444.198395489366,
+      "p10_ms": 4426.466886894195,
+      "p90_ms": 13809.213263096171,
+      "median_ci95_ms": [
+        6196.929687488591,
+        11113.507770991419
+      ],
+      "samples_ms": [
+        4466.241,
+        7118.156,
+        8765.866,
+        9243.961,
+        13759.777,
+        14254.135,
+        7927.619,
+        4068.502,
+        8421.159,
+        8467.238
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 967.6,
+      "load_average_1m": 23.0,
+      "round": 2
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 2.678,
+      "median_ms": 2030.98347899504,
+      "p10_ms": 1201.7978919815505,
+      "p90_ms": 4830.957250011852,
+      "median_ci95_ms": [
+        1442.4216044862987,
+        4142.327000008663
+      ],
+      "samples_ms": [
+        960.394,
+        2049.653,
+        1609.431,
+        2012.314,
+        1656.223,
+        2513.019,
+        4717.173,
+        5855.016,
+        4142.327,
+        1228.621
+      ],
+      "rss_before_load_mb": 28.8,
+      "peak_rss_mb": 822.1,
+      "load_average_1m": 17.45,
+      "round": 2
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 2.676,
+      "median_ms": 11774.441312503768,
+      "p10_ms": 5123.180458604475,
+      "p90_ms": 27831.684233716802,
+      "median_ci95_ms": [
+        6355.2032920124475,
+        21124.39350000932
+      ],
+      "samples_ms": [
+        15083.627,
+        39398.52,
+        18357.23,
+        8465.256,
+        6355.203,
+        6810.622,
+        5305.847,
+        3479.185,
+        26546.48,
+        15702.307
+      ],
+      "rss_before_load_mb": 30.6,
+      "peak_rss_mb": 364.0,
+      "load_average_1m": 12.51,
+      "round": 2
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 1,
+      "load_seconds": 11.742,
+      "median_ms": 2470.5721870122943,
+      "p10_ms": 2061.037008391577,
+      "p90_ms": 3833.4853374952218,
+      "median_ci95_ms": [
+        2120.4541669867467,
+        3575.287291503628
+      ],
+      "samples_ms": [
+        3540.157,
+        2194.126,
+        4182.557,
+        2265.375,
+        3794.7,
+        2120.454,
+        1565.118,
+        2675.769,
+        3355.875,
+        2116.139
+      ],
+      "rss_before_load_mb": 30.7,
+      "peak_rss_mb": 509.4,
+      "load_average_1m": 10.02,
+      "round": 2
+    },
+    {
+      "engine": "mgc",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 16.113,
+      "median_ms": 444.3046874948777,
+      "p10_ms": 389.9992752878461,
+      "p90_ms": 1027.3883464862583,
+      "median_ci95_ms": [
+        400.2305000030901,
+        625.4562294925563
+      ],
+      "samples_ms": [
+        419.915,
+        447.164,
+        400.231,
+        441.445,
+        397.599,
+        600.298,
+        3080.107,
+        799.308,
+        321.6,
+        451.604
+      ],
+      "rss_before_load_mb": 28.8,
+      "peak_rss_mb": 584.4,
+      "load_average_1m": 8.58,
+      "round": 2
+    },
+    {
+      "engine": "ort",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 4.517,
+      "median_ms": 1342.4866665154696,
+      "p10_ms": 799.593749694759,
+      "p90_ms": 2209.7960746905296,
+      "median_ci95_ms": [
+        995.2003749931464,
+        1733.76281200035
+      ],
+      "samples_ms": [
+        1124.368,
+        1354.739,
+        1361.361,
+        626.313,
+        818.847,
+        1171.554,
+        1330.234,
+        2112.787,
+        3082.88,
+        1546.662
+      ],
+      "rss_before_load_mb": 27.9,
+      "peak_rss_mb": 241.1,
+      "load_average_1m": 35.45,
+      "round": 2
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 1.864,
+      "median_ms": 1199.7685419919435,
+      "p10_ms": 1098.3233997074421,
+      "p90_ms": 2830.3733869077396,
+      "median_ci95_ms": [
+        1120.3441670222674,
+        1935.4286455054535
+      ],
+      "samples_ms": [
+        4644.16,
+        2628.842,
+        1120.344,
+        1074.187,
+        1242.016,
+        1237.423,
+        1101.005,
+        1479.694,
+        1162.114,
+        1121.648
+      ],
+      "rss_before_load_mb": 30.7,
+      "peak_rss_mb": 551.8,
+      "load_average_1m": 29.81,
+      "round": 2
+    },
+    {
+      "engine": "torch",
+      "model": "bert-base",
+      "threads": 8,
+      "load_seconds": 4.558,
+      "median_ms": 84.45010449213441,
+      "p10_ms": 81.26777529832907,
+      "p90_ms": 110.59390418813564,
+      "median_ci95_ms": [
+        82.2901249921415,
+        107.49154149380047
+      ],
+      "samples_ms": [
+        84.292,
+        82.29,
+        82.493,
+        87.112,
+        81.45,
+        108.911,
+        84.608,
+        106.072,
+        125.74,
+        79.624
+      ],
+      "rss_before_load_mb": 30.4,
+      "peak_rss_mb": 401.5,
+      "load_average_1m": 28.06,
+      "round": 2
+    },
+    {
+      "engine": "mgc",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 8.144,
+      "median_ms": 208.14899998367764,
+      "p10_ms": 177.7155334246345,
+      "p90_ms": 259.3048829876352,
+      "median_ci95_ms": [
+        181.4811875083251,
+        234.0183119958965
+      ],
+      "samples_ms": [
+        216.662,
+        255.792,
+        212.245,
+        178.216,
+        184.747,
+        173.215,
+        181.511,
+        206.44,
+        209.858,
+        290.92
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 530.2,
+      "load_average_1m": 23.2,
+      "round": 2
+    },
+    {
+      "engine": "ort",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 2.016,
+      "median_ms": 358.13270800281316,
+      "p10_ms": 305.6907625054009,
+      "p90_ms": 417.3320293950382,
+      "median_ci95_ms": [
+        311.63418749929406,
+        392.34516699798405
+      ],
+      "samples_ms": [
+        367.521,
+        306.531,
+        406.693,
+        513.083,
+        386.433,
+        377.997,
+        348.745,
+        298.132,
+        312.653,
+        316.738
+      ],
+      "rss_before_load_mb": 30.5,
+      "peak_rss_mb": 631.8,
+      "load_average_1m": 23.3,
+      "round": 2
+    },
+    {
+      "engine": "ort-noopt",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 1.548,
+      "median_ms": 1327.072271000361,
+      "p10_ms": 899.2273874813691,
+      "p90_ms": 2797.796058320091,
+      "median_ci95_ms": [
+        935.96995799453,
+        2424.933707981836
+      ],
+      "samples_ms": [
+        2424.934,
+        3284.626,
+        2743.704,
+        1215.646,
+        935.97,
+        901.504,
+        997.79,
+        878.736,
+        1438.498,
+        1576.336
+      ],
+      "rss_before_load_mb": 30.3,
+      "peak_rss_mb": 554.8,
+      "load_average_1m": 20.4,
+      "round": 2
+    },
+    {
+      "engine": "torch",
+      "model": "gpt2",
+      "threads": 8,
+      "load_seconds": 8.31,
+      "median_ms": 2182.548354001483,
+      "p10_ms": 1588.6087167047663,
+      "p90_ms": 2509.9953038996314,
+      "median_ci95_ms": [
+        1876.2566250079544,
+        2308.0965419940185
+      ],
+      "samples_ms": [
+        2074.103,
+        1599.037,
+        1494.758,
+        1987.052,
+        2331.32,
+        2308.097,
+        2153.477,
+        2211.62,
+        2255.125,
+        4118.073
+      ],
+      "rss_before_load_mb": 30.4,
+      "peak_rss_mb": 457.0,
+      "load_average_1m": 17.3,
+      "round": 2
+    }
+  ]
+}
