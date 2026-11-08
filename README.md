@@ -7,7 +7,7 @@
 <p align="center">
   <a href="https://github.com/adeoluo/ml-graph-compiler/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/adeoluo/ml-graph-compiler/actions/workflows/ci.yml/badge.svg"></a>
   <a href="https://github.com/adeoluo/ml-graph-compiler/releases"><img alt="Release" src="https://img.shields.io/github/v/release/adeoluo/ml-graph-compiler"></a>
-  <img alt="Python" src="https://img.shields.io/badge/python-3.11%20%7C%203.12-blue">
+  <img alt="Python" src="https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue">
   <img alt="C" src="https://img.shields.io/badge/C-C11%20%7C%20clang-blue">
   <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/badge/license-MIT-green"></a>
 </p>
@@ -271,7 +271,7 @@ packed GEMM does by hand.
 
 ```bash
 git clone https://github.com/adeoluo/ml-graph-compiler && cd ml-graph-compiler
-uv sync --dev                                   # Python 3.11+, clang on the PATH
+uv sync --dev                                   # Python 3.12+, clang on the PATH
 uv run mgc compile tiny-cnn --check --bench 50  # build a bundled model, compare, time it
 ```
 
@@ -402,6 +402,10 @@ make all                                                       # lint, types, co
 
 The real model parity, latency and ablation runs are scripts rather than tests because they need
 the downloaded weights and minutes to hours of compute.
+
+CI runs the suite on Python 3.12, 3.13 and 3.14. Python 3.15 is not in the matrix yet:
+onnxruntime, the reference most operator and backend tests compare against, publishes no 3.15
+wheels (1.31.1 is the latest release), so the suite cannot run there.
 
 ## Responsible AI
 

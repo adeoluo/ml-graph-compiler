@@ -5,12 +5,13 @@ explains what the project does and why; this file explains how to change it safe
 
 ## Project
 
-A deep learning graph compiler: ONNX in, optimized C out.
+A deep learning graph compiler: ONNX models in, an SSA graph IR through optimization passes and a static memory planner, native code out through generated C and clang, with an MLIR export.
 
 ## Layout
 
 - `benchmarks/`: benchmark scripts and recorded results
 - `docs/`: documentation, architecture diagram source and render, design records
+- `scripts/`: maintenance scripts (release, assets, data)
 - `src/`: library and service source
 - `tests/`: test suite
 
