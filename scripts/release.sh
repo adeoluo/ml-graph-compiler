@@ -59,11 +59,15 @@ done
 [ -f Cargo.lock ] && cargo metadata --format-version 1 --offline >/dev/null 2>&1 || true
 [ -f uv.lock ] && uv lock --quiet 2>/dev/null || true
 [ -f package.json ] && npm version "$plain" --no-git-tag-version --allow-same-version >/dev/null
+if [ -f CITATION.cff ]; then
+  today="$(date -u +%Y-%m-%d)"
+  perl -0pi -e "s/^version: .*\$/version: \"$plain\"/m; s/^date-released: .*\$/date-released: \"$today\"/m" CITATION.cff
+fi
 
 git cliff --tag "$next" --output CHANGELOG.md
 perl -0pi -e 's/\n+\z/\n/' CHANGELOG.md
 git add CHANGELOG.md
-for f in pyproject.toml Cargo.toml Cargo.lock uv.lock package.json package-lock.json; do
+for f in pyproject.toml Cargo.toml Cargo.lock uv.lock package.json package-lock.json CITATION.cff; do
   [ -f "$f" ] && git add "$f"
 done
 git commit --quiet -m "chore(release): $next"
