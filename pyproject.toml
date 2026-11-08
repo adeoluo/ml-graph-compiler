@@ -3,9 +3,16 @@ name = "ml-graph-compiler"
 version = "0.1.0"
 description = "A deep learning graph compiler: ONNX import, SSA IR, optimization passes, static memory planning and C code generation"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Adeolu Ogunnoiki" }]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "numpy>=1.26",
     "onnx>=1.16",
@@ -43,7 +50,7 @@ packages = ["src/ml_graph_compiler"]
 # ---------------------------------------------------------------------------
 [tool.ruff]
 line-length = 100
-target-version = "py311"
+target-version = "py312"
 src = ["src", "tests"]
 
 [tool.ruff.lint]
@@ -61,7 +68,7 @@ ignore = []
 known-first-party = ["ml_graph_compiler"]
 
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.12"
 strict = true
 warn_unused_configs = true
 disallow_untyped_defs = true
