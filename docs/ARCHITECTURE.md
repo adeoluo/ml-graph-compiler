@@ -3,15 +3,11 @@
 The compiler is a straight pipeline over one in-memory graph. Each stage is a module under
 `src/ml_graph_compiler/`.
 
-```mermaid
-flowchart LR
-    onnx[ONNX file] --> imp[onnx_import] --> si[shape_inference] --> ir[(ir.Graph)]
-    ir --> pm[passes: fold, dce, cse, simplify, fuse, layout, loopfuse]
-    pm --> sch[schedule] --> mem[memory.plan_memory]
-    mem --> c[codegen.c] --> build[codegen.build: clang] --> so[(.so + weights blob)]
-    ir --> interp[interpreter: numpy]
-    pm --> mlir[mlir.emit] --> opt[mlir-opt verify, optional lowering]
-```
+<p align="center">
+  <img src="architecture/pipeline.svg" alt="Architecture diagram" width="860">
+</p>
+
+<sub>Legend: amber = entry points and external systems, indigo = core logic, green = data and state, blue = validation and control, grey = observability and outputs.</sub>
 
 ## Stages
 
