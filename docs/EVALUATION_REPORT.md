@@ -9,7 +9,7 @@ each table from those files.
 - **Hardware:** one Apple M1 laptop, 8 cores (4 performance, 4 efficiency), 8 GB RAM, macOS 27,
   shared with other jobs during the runs (load averages are recorded per cell). No GPU is used.
 - **Software:** Python 3.12, numpy, Apple clang with Homebrew libomp, onnxruntime 1.31 (CPU
-  execution provider), PyTorch 2 with torchvision and transformers 4.57 for the eager baselines,
+  execution provider), PyTorch 2.15 with torchvision and transformers 5.22.2 for the exports and eager baselines,
   LLVM/MLIR from Homebrew for the MLIR checks.
 - **Models:** ResNet-50 and MobileNetV2 (torchvision ImageNet weights), BERT-base uncased and
   GPT-2 124M (Hugging Face), exported by `benchmarks/export_models.py` to ONNX opset 14 with
@@ -40,6 +40,18 @@ by the numpy interpreter on a subset (40 images or 1 sequence) as an independent
 Interpreter at `O0` against onnxruntime: max abs error 1.5e-05 (ResNet-50), 2.6e-05
 (MobileNetV2), 1.9e-05 (BERT-base) and 2.6e-04 (GPT-2), with full top-1 agreement. GPT-2 has the
 largest absolute error because its logits are large (order 100); its relative error is 1.9e-06.
+
+**transformers 4.57.6 to 5.22.2.** `benchmarks/compare_exports.py` (raw:
+`results/export_transformers5.json`) compares the exports from both releases. transformers 5
+builds BERT's token type ids with a gather instead of a slice unless they are passed explicitly,
+and GPT-2's eager attention no longer applies its own causal mask, so `export_models.py` now
+passes zero token type ids and a fixed additive causal mask. The resulting graphs are smaller
+(BERT-base 1,212 instead of 1,266 ONNX nodes, GPT-2 2,043 instead of 2,127; the `Where` and
+`ConstantOfShape` nodes that built attention masks at run time are gone), produce bit-identical onnxruntime outputs on the 50 sequences (max abs
+difference 0.0, 6,400 of 6,400 argmax positions equal), and compile at `-O3` to the same node,
+kernel and arena counts (245 nodes and 2.25 MiB for BERT-base, 232 nodes and 3 MiB for GPT-2).
+The parity table above was rerun on the transformers 5 exports and is unchanged to two
+significant figures.
 
 ## 2. Latency and peak memory
 

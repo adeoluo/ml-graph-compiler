@@ -76,7 +76,12 @@ Reproduce: `uv run --group bench python benchmarks/parity.py`.
 Every compiled model picks the same top-1 class as onnxruntime at every image and token
 position, and the image models reach the same Imagenette top-1 accuracy. The unoptimized graph
 run by the numpy interpreter (`O0`) also matches onnxruntime (max abs error 1.5e-05 to 2.6e-04
-on a subset), so each pass is checked against both references.
+on a subset), so each pass is checked against both references. The text models are exported with
+transformers 5.22.2; its graphs differ from the 4.57.6 exports (BERT-base 1,212 instead of 1,266
+ONNX nodes, GPT-2 2,043 instead of 2,127) but give bit-identical onnxruntime outputs on the 50
+sequences and compile at `-O3` to the same node and kernel counts
+([`export_transformers5.json`](benchmarks/results/export_transformers5.json),
+`benchmarks/compare_exports.py`).
 
 ### Latency and peak memory against onnxruntime and PyTorch
 
