@@ -63,10 +63,17 @@ if [ -f CITATION.cff ]; then
   today="$(date -u +%Y-%m-%d)"
   perl -0pi -e "s/^version: .*\$/version: \"$plain\"/m; s/^date-released: .*\$/date-released: \"$today\"/m" CITATION.cff
 fi
+# Hard-coded version strings that mirror the manifest.
+version_files=()
+for f in src/*/__init__.py python/*/__init__.py src/version.ts; do
+  [ -f "$f" ] || continue
+  perl -pi -e "s/^__version__ = \"[0-9]+\.[0-9]+\.[0-9]+\"/__version__ = \"$plain\"/; s/^export const VERSION = \"[0-9]+\.[0-9]+\.[0-9]+\"/export const VERSION = \"$plain\"/" "$f"
+  version_files+=("$f")
+done
 
 git cliff --tag "$next" --output CHANGELOG.md
 perl -0pi -e 's/\n+\z/\n/' CHANGELOG.md
-git add CHANGELOG.md
+git add CHANGELOG.md "${version_files[@]+"${version_files[@]}"}"
 for f in pyproject.toml Cargo.toml Cargo.lock uv.lock package.json package-lock.json CITATION.cff; do
   [ -f "$f" ] && git add "$f"
 done
