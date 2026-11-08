@@ -1,0 +1,28 @@
+flowchart LR
+    classDef edge     fill:#F59E0B,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+    classDef core     fill:#6366F1,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef data     fill:#10B981,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef control  fill:#0EA5E9,stroke:#1E293B,color:#ffffff,stroke-width:1px;
+    classDef obs      fill:#CBD5E1,stroke:#1E293B,color:#1E293B,stroke-width:1px;
+    subgraph Frontend["Frontend"]
+        direction TB
+        onnx["ONNX file"]:::edge --> imp["onnx_import"]:::core
+        imp --> si["shape_inference"]:::core
+        si --> ir[("ir.Graph")]:::data
+    end
+    subgraph Optimize["Optimize and plan"]
+        direction TB
+        pm["passes: fold, dce, cse,<br/>simplify, fuse, layout, loopfuse"]:::core
+        pm --> sch["schedule"]:::control
+        sch --> mem["memory.plan_memory"]:::control
+    end
+    subgraph Backends["Backends"]
+        direction TB
+        c["codegen.c"]:::core --> build["codegen.build: clang"]:::core
+        build --> so[(".so + weights blob")]:::data
+        interp["interpreter: numpy"]:::core
+        mlir["mlir.emit"]:::core --> opt["mlir-opt verify,<br/>optional lowering"]:::control
+    end
+    Frontend -->|ir.Graph| Optimize
+    Optimize -->|planned graph| Backends
+    Frontend -.->|reference run| Backends
