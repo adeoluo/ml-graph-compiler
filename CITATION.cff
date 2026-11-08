@@ -1,10 +1,22 @@
 cff-version: 1.2.0
-message: "If you use this work, please cite it."
+message: "If you use this software, please cite it as below."
+type: software
 title: "ML Graph Compiler"
+abstract: "Deep learning graph compiler: ONNX import, SSA IR, fusion and layout passes, static memory planning, C code generation with clang and NEON, and MLIR export"
 authors:
   - family-names: "Ogunnoiki"
     given-names: "Adeolu"
-version: 0.1.0
-date-released: 2026-01-01
+version: "0.1.0"
+date-released: "2026-11-07"
 license: MIT
-url: "REPO_URL"
+repository-code: "https://github.com/adeoluo/ml-graph-compiler"
+url: "https://github.com/adeoluo/ml-graph-compiler"
+keywords:
+  - "code-generation"
+  - "compiler"
+  - "deep-learning"
+  - "graph-optimization"
+  - "memory-planning"
+  - "mlir"
+  - "neon"
+  - "onnx"
