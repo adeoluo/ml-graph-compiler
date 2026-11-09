@@ -59,6 +59,26 @@ done
 [ -f Cargo.lock ] && cargo metadata --format-version 1 --offline >/dev/null 2>&1 || true
 [ -f uv.lock ] && uv lock --quiet 2>/dev/null || true
 [ -f package.json ] && npm version "$plain" --no-git-tag-version --allow-same-version >/dev/null
+# Nested crates and npm packages (a Rust core in rust/, a dashboard in web/, a client) ship in
+# the same release, so they carry the same version; benchmark harnesses and fixtures do not.
+nested=()
+while IFS= read -r manifest; do
+  dir="$(dirname "$manifest")"
+  case "$manifest" in
+    */Cargo.toml)
+      grep -q '^version = "' "$manifest" || continue
+      perl -0pi -e "s/^version = \"[^\"]*\"/version = \"$plain\"/m" "$manifest"
+      cargo metadata --format-version 1 --offline --manifest-path "$manifest" >/dev/null 2>&1 || true
+      nested+=("$manifest")
+      [ -f "$dir/Cargo.lock" ] && nested+=("$dir/Cargo.lock")
+      ;;
+    */package.json)
+      (cd "$dir" && npm version "$plain" --no-git-tag-version --allow-same-version >/dev/null)
+      nested+=("$manifest")
+      [ -f "$dir/package-lock.json" ] && nested+=("$dir/package-lock.json")
+      ;;
+  esac
+done < <(git ls-files '*/Cargo.toml' '*/package.json' | grep -vE '(^|/)(benchmarks|tests?|testdata|fixtures|examples|node_modules)/')
 if [ -f CITATION.cff ]; then
   today="$(date -u +%Y-%m-%d)"
   perl -0pi -e "s/^version: .*\$/version: \"$plain\"/m; s/^date-released: .*\$/date-released: \"$today\"/m" CITATION.cff
@@ -73,7 +93,7 @@ done
 
 git cliff --tag "$next" --output CHANGELOG.md
 perl -0pi -e 's/\n+\z/\n/' CHANGELOG.md
-git add CHANGELOG.md "${version_files[@]+"${version_files[@]}"}"
+git add CHANGELOG.md "${version_files[@]+"${version_files[@]}"}" "${nested[@]+"${nested[@]}"}"
 for f in pyproject.toml Cargo.toml Cargo.lock uv.lock package.json package-lock.json CITATION.cff; do
   [ -f "$f" ] && git add "$f"
 done
