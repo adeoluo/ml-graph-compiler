@@ -1,0 +1,63 @@
+name: Release assets
+
+# Builds the sdist and wheel for a release and attaches them, with SHA256SUMS. Runs when a
+# release is published; run it by hand with a tag to rebuild the assets of an existing release.
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to build and attach assets to (for example v0.1.0)
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: sdist and wheel
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.tag || github.event.release.tag_name }}
+      - uses: astral-sh/setup-uv@v10.3.3
+      - run: uv build --out-dir dist
+      - name: Check the wheel installs and carries the release version
+        env:
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          uv venv /tmp/smoke --python 3.14
+          uv pip install --python /tmp/smoke --no-deps dist/*.whl
+          /tmp/smoke/bin/python - <<PY
+          import importlib.metadata as m, pathlib
+          name = pathlib.Path(next(pathlib.Path("dist").glob("*.whl"))).name.split("-")[0]
+          version = m.version(name)
+          assert "v" + version == "$TAG", (version, "$TAG")
+          print(name, version)
+          PY
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dist
+          path: dist/*
+          if-no-files-found: error
+
+  upload:
+    name: attach to the release
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+      - env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ inputs.tag || github.event.release.tag_name }}
+        run: |
+          cd dist
+          sha256sum -- * > SHA256SUMS
+          gh release upload "$TAG" -R "$GITHUB_REPOSITORY" --clobber ./*
