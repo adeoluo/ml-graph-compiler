@@ -56,8 +56,11 @@ stage detail is in [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md); design choices 
 All numbers below were produced on one Apple M1 laptop (8 cores, 8 GB, macOS) with float32,
 batch 1, images 224x224 and 128 tokens, by the scripts in [`benchmarks/`](benchmarks/). Raw
 results are in [`benchmarks/results/`](benchmarks/results/), and
-`uv run python benchmarks/tables.py` prints every table here from them. The full write-up,
-including threats to validity, is [docs/EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md).
+`uv run python benchmarks/tables.py` prints every table here from them. Library versions:
+numpy 2.5.4, onnx 1.23.2, onnxruntime 1.31.1 (CPU execution provider), PyTorch 2.15.0,
+torchvision 0.29.2 and transformers 5.22.2 (text model exports and the PyTorch baselines), Apple
+clang 21 with Homebrew libomp. The full write-up, including threats to validity, is
+[docs/EVALUATION_REPORT.md](docs/EVALUATION_REPORT.md).
 
 ### Numerical parity with onnxruntime
 
@@ -76,7 +79,12 @@ Reproduce: `uv run --group bench python benchmarks/parity.py`.
 Every compiled model picks the same top-1 class as onnxruntime at every image and token
 position, and the image models reach the same Imagenette top-1 accuracy. The unoptimized graph
 run by the numpy interpreter (`O0`) also matches onnxruntime (max abs error 1.5e-05 to 2.6e-04
-on a subset), so each pass is checked against both references.
+on a subset), so each pass is checked against both references. The text models are exported with
+transformers 5.22.2; its graphs differ from the 4.57.6 exports (BERT-base 1,212 instead of 1,266
+ONNX nodes, GPT-2 2,043 instead of 2,127) but give bit-identical onnxruntime outputs on the 50
+sequences and compile at `-O3` to the same node and kernel counts
+([`export_transformers5.json`](benchmarks/results/export_transformers5.json),
+`benchmarks/compare_exports.py`).
 
 ### Latency and peak memory against onnxruntime and PyTorch
 
@@ -91,7 +99,7 @@ and `... --models bert-base gpt2 --warmup 3 --repeat 10 --name latency_transform
 with `--name latency_transformers_run2`).
 
 latency_cnn (latency_cnn): 48 cells, 1 minute load average during the cells min 11.2, median 50.0, max 89.3 (8 cores)
-latency_transformers (latency_transformers, latency_transformers_run2): 96 cells, 1 minute load average during the cells min 7.2, median 17.3, max 118.2 (8 cores)
+latency_transformers (latency_transformers, latency_transformers_run2): 96 cells, 1 minute load average during the cells min 3.0, median 5.5, max 12.2 (8 cores)
 
 Threads = 1: median ms [95% CI] (peak RSS MB)
 
@@ -99,8 +107,8 @@ Threads = 1: median ms [95% CI] (peak RSS MB)
 |---|---:|---:|---:|---:|---|---|
 | ResNet-50 | 224.3 [207.0, 285.4] (431) | 212.9 [180.5, 267.4] (264) | 220.1 [196.1, 256.5] (185) | 61.3 [57.2, 68.7] (362) | tie | loss, 3.66x slower |
 | MobileNetV2 | 16.0 [15.7, 17.0] (120) | 21.8 [18.8, 23.2] (113) | 18.0 [17.2, 20.1] (108) | 25.7 [23.9, 27.6] (237) | win, 1.37x | win, 1.61x |
-| BERT-base | 1985.7 [1297.5, 2804.0] (572) | 1000.1 [795.7, 1233.0] (428) | 1314.1 [1131.3, 1546.4] (627) | 195.4 [172.8, 237.9] (399; 5 rounds) | loss, 1.99x slower | loss, 10.16x slower |
-| GPT-2 | 5021.5 [3823.8, 6863.8] (832) | 1960.4 [1604.7, 2513.0] (640) | 1685.3 [1310.5, 3483.0] (623) | 1316.4 [389.2, 2376.0] (577; 5 rounds) | loss, 2.56x slower | loss, 3.81x slower |
+| BERT-base | 483.1 [435.6, 545.3] (932) | 407.2 [399.7, 423.9] (647) | 535.7 [500.2, 557.0] (778) | 75.4 [73.8, 77.9] (668) | loss, 1.19x slower | loss, 6.41x slower |
+| GPT-2 | 603.3 [586.4, 615.1] (1184) | 553.0 [544.3, 565.6] (836) | 615.9 [602.0, 639.5] (906) | 136.0 [133.8, 138.9] (847) | loss, 1.09x slower | loss, 4.44x slower |
 
 Threads = 8: median ms [95% CI] (peak RSS MB)
 
@@ -108,26 +116,27 @@ Threads = 8: median ms [95% CI] (peak RSS MB)
 |---|---:|---:|---:|---:|---|---|
 | ResNet-50 | 58.6 [54.4, 61.6] (470) | 196.9 [149.1, 235.5] (281) | 194.3 [169.3, 232.2] (202) | 101.8 [88.2, 116.0] (462) | win, 3.36x | win, 1.74x |
 | MobileNetV2 | 17.5 [15.9, 22.5] (116) | 30.9 [26.1, 46.0] (112) | 39.1 [27.7, 47.6] (111) | 78.9 [75.7, 88.1] (226) | win, 1.77x | win, 4.50x |
-| BERT-base | 398.9 [312.2, 483.7] (577) | 1257.3 [1085.0, 1391.2] (459) | 2520.3 [1725.2, 2998.7] (580) | 199.3 [176.6, 251.1] (384; 5 rounds) | win, 3.15x | loss, 2.00x slower |
-| GPT-2 | 429.8 [273.2, 499.8] (559) | 892.2 [513.1, 1081.6] (633) | 1074.8 [952.4, 1246.4] (695) | 2182.5 [1596.3, 2729.0] (470; 5 rounds) | win, 2.08x | win, 5.08x |
+| BERT-base | 176.4 [164.1, 191.0] (895) | 307.6 [294.5, 336.8] (736) | 397.9 [279.4, 635.5] (836) | 76.5 [72.5, 81.5] (660) | win, 1.74x | loss, 2.31x slower |
+| GPT-2 | 247.6 [232.7, 254.0] (1298) | 391.8 [367.6, 426.3] (865) | 404.1 [297.2, 450.7] (944) | 135.4 [133.0, 136.5] (840) | win, 1.58x | loss, 1.83x slower |
 
-The machine was shared with other heavy jobs during these runs; the load averages above are
-far above its 8 cores, so absolute times are inflated and the 8 thread numbers in particular
-measure behaviour under contention. Read the tables as a comparison under the same conditions
-(engines were interleaved), not as best case latency.
+The CNN cells ran while the machine was shared with other heavy jobs (load averages far above
+its 8 cores), so their absolute times are inflated and their 8 thread numbers measure behaviour
+under contention. The transformer cells were rerun on the transformers 5.22.2 exports with less
+load (median 5.5) but with another job still running. Read every table as a comparison under the
+same conditions (engines were interleaved), not as best case latency.
 
 The transformer cells pool two complete runs (`latency_transformers.json` and
-`latency_transformers_run2.json`, 6 rounds per cell; PyTorch has 5 because its first round in the
-first run failed to start, before PyTorch was installed in the environment; the failure is kept
-in the raw file). On ResNet-50 and MobileNetV2 the compiled code
-beats onnxruntime at 8 threads (3.36x and 1.77x) and PyTorch eager (1.74x and 4.50x); single
+`latency_transformers_run2.json`, 6 rounds per cell). On ResNet-50 and MobileNetV2 the compiled
+code beats onnxruntime at 8 threads (3.36x and 1.77x) and PyTorch eager (1.74x and 4.50x); single
 threaded it ties onnxruntime on ResNet-50, wins on MobileNetV2 and loses to PyTorch's tuned
-convolutions on ResNet-50 by 3.66x. On the transformers it wins against onnxruntime at 8 threads
-(BERT-base 3.15x, GPT-2 2.08x) and loses single threaded (1.99x and 2.56x slower); PyTorch eager
-is the fastest engine on BERT-base at both thread counts. The single thread transformer numbers
-are the least reliable: the compiled model memory maps 0.4 to 0.5 GB of weights, and pages
-evicted under the machine's memory pressure turn into multi-second outliers (see the threats to
-validity).
+convolutions on ResNet-50 by 3.66x. On the transformers it beats onnxruntime at 8 threads
+(BERT-base 1.74x, GPT-2 1.58x) and loses to it single threaded (1.19x and 1.09x slower).
+PyTorch eager is the fastest engine on both transformers at both thread counts (2.31x and 1.83x
+faster than mgc at 8 threads, 6.41x and 4.44x single threaded): its macOS build sends matrix
+multiplies to Apple Accelerate (`BLAS_INFO=accelerate`) and runs as fast on 1 thread as on 8,
+while mgc's GEMM is portable NEON code. The earlier transformer run (transformers 4.57.6 exports,
+load averages up to 118) showed larger 8 thread margins over onnxruntime (3.15x and 2.08x) and a
+win over PyTorch on GPT-2; on the quieter rerun those margins shrink and PyTorch leads.
 
 ### Effect of each pass
 
@@ -156,20 +165,20 @@ cumulative: nodes, arena MB, median ms at 1 / 8 threads, max abs err vs ORT
 | MobileNetV2 | fuse | 55 | 5.7 | 137.9 | 50.6 | 6.0e-06 |
 | MobileNetV2 | layout | 56 | 5.7 | 47.0 | 28.3 | 6.6e-06 |
 | MobileNetV2 | loopfuse | 56 | 5.7 | 48.7 | 32.1 | 6.6e-06 |
-| BERT-base | O0 | 927 | 11.2 | 4515.6 | 2145.4 | 1.6e-05 |
-| BERT-base | fold | 687 | 11.2 | 2719.0 | 878.8 | 1.6e-05 |
-| BERT-base | cse | 687 | 11.2 | 2225.9 | 1685.3 | 1.6e-05 |
-| BERT-base | simplify | 675 | 11.2 | 2640.0 | 499.5 | 2.1e-05 |
-| BERT-base | fuse | 246 | 2.2 | 1127.7 | 303.3 | 1.7e-05 |
-| BERT-base | layout | 246 | 2.2 | 2401.5 | 440.9 | 1.7e-05 |
-| BERT-base | loopfuse | 245 | 2.2 | 3353.1 | 552.8 | 1.7e-05 |
-| GPT-2 | O0 | 1296 | 147.6 | 3937.8 | 1711.6 | 9.9e-05 |
-| GPT-2 | fold | 687 | 147.6 | 2881.9 | 827.9 | 9.9e-05 |
-| GPT-2 | cse | 687 | 147.6 | 3144.6 | 1365.4 | 9.9e-05 |
-| GPT-2 | simplify | 661 | 147.6 | 5436.5 | 3400.8 | 1.1e-04 |
-| GPT-2 | fuse | 244 | 3.0 | 2229.2 | 639.9 | 1.1e-04 |
-| GPT-2 | layout | 244 | 3.0 | 3151.8 | 503.1 | 1.1e-04 |
-| GPT-2 | loopfuse | 232 | 3.0 | 1549.8 | 484.0 | 1.1e-04 |
+| BERT-base | O0 | 905 | 11.2 | 410.1 | 123.8 | 1.6e-05 |
+| BERT-base | fold | 675 | 11.2 | 405.7 | 125.1 | 1.6e-05 |
+| BERT-base | cse | 675 | 11.2 | 406.4 | 122.4 | 1.6e-05 |
+| BERT-base | simplify | 675 | 11.2 | 404.5 | 121.6 | 2.1e-05 |
+| BERT-base | fuse | 246 | 2.2 | 293.8 | 70.7 | 1.7e-05 |
+| BERT-base | layout | 246 | 2.2 | 290.4 | 70.2 | 1.7e-05 |
+| BERT-base | loopfuse | 245 | 2.2 | 290.8 | 69.8 | 1.7e-05 |
+| GPT-2 | O0 | 1248 | 147.6 | 587.4 | 248.3 | 9.9e-05 |
+| GPT-2 | fold | 675 | 147.6 | 607.9 | 247.8 | 9.9e-05 |
+| GPT-2 | cse | 675 | 147.6 | 600.4 | 251.0 | 9.9e-05 |
+| GPT-2 | simplify | 661 | 147.6 | 563.3 | 238.7 | 1.1e-04 |
+| GPT-2 | fuse | 244 | 3.0 | 435.4 | 110.3 | 1.1e-04 |
+| GPT-2 | layout | 244 | 3.0 | 415.2 | 102.9 | 1.1e-04 |
+| GPT-2 | loopfuse | 232 | 3.0 | 439.5 | 104.7 | 1.1e-04 |
 
 leave_one_out: nodes, arena MB, median ms at 1 / 8 threads, max abs err vs ORT
 
@@ -189,20 +198,20 @@ leave_one_out: nodes, arena MB, median ms at 1 / 8 threads, max abs err vs ORT
 | MobileNetV2 | O3-no-fuse | 153 | 9.2 | 187.6 | 90.8 | 9.5e-06 |
 | MobileNetV2 | O3-no-layout | 55 | 5.7 | 167.8 | 83.5 | 6.0e-06 |
 | MobileNetV2 | O3-no-loopfuse | 56 | 5.7 | 56.8 | 35.8 | 6.6e-06 |
-| BERT-base | O3 | 245 | 2.2 | 932.1 | 273.6 | 1.7e-05 |
-| BERT-base | O3-no-fold | 247 | 2.2 | 979.9 | 323.4 | 1.7e-05 |
-| BERT-base | O3-no-cse | 245 | 2.2 | 1581.2 | 409.8 | 1.7e-05 |
-| BERT-base | O3-no-simplify | 245 | 2.2 | 2950.4 | 535.6 | 1.7e-05 |
-| BERT-base | O3-no-fuse | 515 | 11.2 | 960.3 | 576.7 | 1.9e-05 |
-| BERT-base | O3-no-layout | 245 | 2.2 | 2149.8 | 336.5 | 1.7e-05 |
-| BERT-base | O3-no-loopfuse | 246 | 2.2 | 786.1 | 276.3 | 1.7e-05 |
-| GPT-2 | O3 | 232 | 3.0 | 1051.5 | 372.5 | 1.1e-04 |
-| GPT-2 | O3-no-fold | 235 | 3.0 | 846.7 | 332.3 | 1.1e-04 |
-| GPT-2 | O3-no-cse | 232 | 3.0 | 821.5 | 323.9 | 1.1e-04 |
-| GPT-2 | O3-no-simplify | 378 | 3.0 | 849.7 | 345.9 | 1.1e-04 |
-| GPT-2 | O3-no-fuse | 478 | 147.6 | 1371.3 | 602.9 | 9.9e-05 |
-| GPT-2 | O3-no-layout | 232 | 3.0 | 1122.5 | 339.5 | 1.1e-04 |
-| GPT-2 | O3-no-loopfuse | 244 | 3.0 | 807.9 | 325.8 | 1.1e-04 |
+| BERT-base | O3 | 245 | 2.2 | 362.8 | 117.0 | 1.7e-05 |
+| BERT-base | O3-no-fold | 247 | 2.2 | 370.2 | 118.4 | 1.7e-05 |
+| BERT-base | O3-no-cse | 245 | 2.2 | 390.3 | 128.3 | 1.7e-05 |
+| BERT-base | O3-no-simplify | 245 | 2.2 | 464.4 | 175.2 | 1.7e-05 |
+| BERT-base | O3-no-fuse | 515 | 11.2 | 893.4 | 295.3 | 1.9e-05 |
+| BERT-base | O3-no-layout | 245 | 2.2 | 737.4 | 194.8 | 1.7e-05 |
+| BERT-base | O3-no-loopfuse | 246 | 2.2 | 714.6 | 195.4 | 1.7e-05 |
+| GPT-2 | O3 | 232 | 3.0 | 1276.4 | 359.0 | 1.1e-04 |
+| GPT-2 | O3-no-fold | 233 | 3.0 | 1105.5 | 324.5 | 1.1e-04 |
+| GPT-2 | O3-no-cse | 232 | 3.0 | 1103.4 | 330.2 | 1.1e-04 |
+| GPT-2 | O3-no-simplify | 378 | 3.0 | 774.0 | 279.9 | 1.1e-04 |
+| GPT-2 | O3-no-fuse | 478 | 147.6 | 1111.4 | 440.6 | 9.9e-05 |
+| GPT-2 | O3-no-layout | 232 | 3.0 | 680.1 | 246.0 | 1.1e-04 |
+| GPT-2 | O3-no-loopfuse | 244 | 3.0 | 681.2 | 240.9 | 1.1e-04 |
 
 Two passes carry most of the speed. Operator fusion folds BatchNorm into convolutions and merges
 bias, residual and activation epilogues into the GEMM: it removes 63% to 67% of the nodes
@@ -212,12 +221,16 @@ embedding matrix through a transpose, which FusedGemm absorbs instead of materia
 what makes the convolution GEMMs fast: removing it from `O3` makes MobileNetV2 3.3 times and
 ResNet-50 2.3 times slower at 1 thread, and removing fusion costs 3.6 and 1.8 times. Constant
 folding is required for the C backend on ResNet-50 (BatchNorm parameters must be constants) and
-removes 26% of the BERT-base and 47% of the GPT-2 nodes, mostly shape arithmetic. CSE, algebraic
+removes 25% of the BERT-base and 46% of the GPT-2 nodes, mostly shape arithmetic. CSE, algebraic
 simplification and loop fusion change few nodes on these exported graphs, and their latency
-effect is within the run to run noise of this loaded machine. The transformer latencies in this
-study varied by 2 to 3 times between configurations that compile to nearly the same code, which
-is paging noise (see the threats to validity), so only the node counts, arena sizes and errors
-are reliable there. Every configuration stays within 1.2e-04 of onnxruntime.
+effect is within the run to run noise of this loaded machine. The cumulative transformer runs
+(transformers 5.22.2 exports) had the machine mostly to themselves: fusion is the one pass with
+a clear effect there (BERT-base 404 to 294 ms at 1 thread and 122 to 71 ms at 8 threads, GPT-2
+563 to 435 ms and 239 to 110 ms). Another job started during the leave-one-out transformer runs,
+and their latencies drift upward in run order (`O3` itself measured 363 ms for BERT-base and
+1,276 ms for GPT-2 single threaded, against 291 ms and 440 ms for the identical `loopfuse`
+pipeline in the cumulative study), so only their node counts, arena sizes and errors are
+reliable. Every configuration stays within 1.2e-04 of onnxruntime.
 
 ### Memory planning
 
@@ -253,17 +266,19 @@ dialect), built with clang and run. Reproduce: `uv run --group bench python benc
 | ResNet-50 | O3 | 58 | 1,216 | none | yes |
 | MobileNetV2 | O0 | 152 | 2,011 | none | yes |
 | MobileNetV2 | O3 | 56 | 1,224 | none | yes |
-| BERT-base | O0 | 927 | 5,922 | ConstantOfShape x1 | yes |
+| BERT-base | O0 | 905 | 5,773 | none | yes |
 | BERT-base | O3 | 245 | 3,469 | none | yes |
-| GPT-2 | O0 | 1,296 | 6,837 | none | yes |
-| GPT-2 | O3 | 232 | 3,132 | none | yes |
+| GPT-2 | O0 | 1,248 | 6,633 | none | yes |
+| GPT-2 | O3 | 232 | 3,131 | none | yes |
 
 | Model | Lowered and built (s) | Max abs err vs ORT | Top-1 agrees | ms, 1 thread |
 |---|---:|---:|---|---:|
-| MobileNetV2 | 32 | 1.0e-05 | yes | 585 |
+| MobileNetV2 | 13 | 1.0e-05 | yes | 291 |
 
-Every model at `O3` lowers completely to standard dialects. The lowered MobileNetV2 matches
-onnxruntime, but at 585 ms single threaded it is more than 30 times slower than the C backend: the default MLIR
+Every model lowers completely to standard dialects at both levels (the transformers 4.57.6
+BERT-base export left one `ConstantOfShape` in the mgc dialect at `O0`; the 5.22.2 export no
+longer has it). The lowered MobileNetV2 matches onnxruntime, but at 291 ms single threaded it is
+more than 15 times slower than the C backend (16.0 ms in the latency table): the default MLIR
 lowering emits naive loops with no tiling or vectorization, which is the work the C backend's
 packed GEMM does by hand.
 

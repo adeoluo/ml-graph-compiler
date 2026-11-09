@@ -34,7 +34,7 @@ dev = [
 bench = [
     "torch>=2.4",
     "torchvision>=0.19",
-    "transformers>=4.44,<5",
+    "transformers>=5.22.2",
     "pillow>=10",
 ]
 
