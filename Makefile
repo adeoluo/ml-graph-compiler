@@ -28,10 +28,10 @@ coverage: ## Tests with coverage gate
 run: ## Optimize and run a bundled sample model
 	uv run python -m ml_graph_compiler run tiny-cnn --check
 
-diagram: ## Render architecture diagram to SVG
-	mmdc -i docs/architecture/architecture.mmd \
-	     -o docs/architecture/architecture.svg \
-	     -c mermaid.config.json -b transparent
+diagram: ## Render every diagram in docs/architecture to SVG (house theme, white background)
+	@for f in docs/architecture/*.mmd; do \
+		npx -y @mermaid-js/mermaid-cli -q -i "$$f" -o "$${f%.mmd}.svg" -c mermaid.config.json -b white || exit 1; \
+	done
 
 docker-build: ## Build the image
 	docker build -t ml-graph-compiler .
