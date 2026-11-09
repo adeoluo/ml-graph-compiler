@@ -4,11 +4,11 @@
     "processor": "arm",
     "python": "3.12.14",
     "cpus": 8,
-    "load_average_1m": 26.72,
+    "load_average_1m": 3.61,
     "cpu": "Apple M1",
     "memory_gb": 8.0
   },
-  "timestamp": "2026-11-07 04:15:26",
+  "timestamp": "2026-11-08 22:35:54",
   "args": {
     "models": [
       "resnet50",
@@ -45,8 +45,8 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.384,
-        "verify_seconds": 3.122
+        "export_seconds": 0.028,
+        "verify_seconds": 2.253
       },
       "O3": {
         "nodes": 58,
@@ -61,8 +61,8 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.367,
-        "verify_seconds": 1.546
+        "export_seconds": 0.015,
+        "verify_seconds": 0.068
       }
     },
     "mobilenetv2": {
@@ -80,8 +80,8 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.053,
-        "verify_seconds": 1.314
+        "export_seconds": 0.009,
+        "verify_seconds": 0.066
       },
       "O3": {
         "nodes": 56,
@@ -95,43 +95,37 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.043,
-        "verify_seconds": 1.077
+        "export_seconds": 0.006,
+        "verify_seconds": 0.061
       }
     },
     "bert-base": {
       "O0": {
-        "nodes": 927,
-        "lines": 5922,
+        "nodes": 905,
+        "lines": 5773,
         "lowered_ops": {
-          "Add": 172,
-          "Concat": 49,
-          "Div": 49,
-          "Equal": 1,
+          "Add": 160,
+          "Concat": 48,
+          "Div": 37,
           "Erf": 12,
-          "Expand": 1,
           "Gather": 4,
           "Gemm": 1,
           "MatMul": 96,
-          "Mul": 50,
+          "Mul": 61,
           "Pow": 25,
           "ReduceMean": 50,
-          "Reshape": 49,
-          "Shape": 1,
+          "Reshape": 48,
           "Softmax": 12,
           "Sqrt": 25,
           "Sub": 25,
           "Tanh": 1,
           "Transpose": 120,
-          "Unsqueeze": 182,
-          "Where": 1
+          "Unsqueeze": 180
         },
-        "fallback_ops": {
-          "ConstantOfShape": 1
-        },
-        "fully_lowered": false,
-        "export_seconds": 5.148,
-        "verify_seconds": 1.75
+        "fallback_ops": {},
+        "fully_lowered": true,
+        "export_seconds": 0.349,
+        "verify_seconds": 0.142
       },
       "O3": {
         "nodes": 245,
@@ -149,25 +143,24 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.82,
-        "verify_seconds": 1.419
+        "export_seconds": 0.062,
+        "verify_seconds": 0.076
       }
     },
     "gpt2": {
       "O0": {
-        "nodes": 1296,
-        "lines": 6837,
+        "nodes": 1248,
+        "lines": 6633,
         "lowered_ops": {
           "Add": 111,
-          "Cast": 25,
+          "Cast": 13,
           "Concat": 146,
-          "ConstantOfShape": 12,
-          "Div": 37,
+          "Div": 25,
           "Gather": 2,
           "Gemm": 48,
           "MatMul": 25,
-          "Mul": 73,
-          "Pow": 49,
+          "Mul": 85,
+          "Pow": 37,
           "ReduceMean": 50,
           "Reshape": 146,
           "Softmax": 12,
@@ -176,17 +169,16 @@
           "Sub": 25,
           "Tanh": 12,
           "Transpose": 49,
-          "Unsqueeze": 425,
-          "Where": 12
+          "Unsqueeze": 425
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 4.659,
-        "verify_seconds": 1.088
+        "export_seconds": 0.559,
+        "verify_seconds": 0.102
       },
       "O3": {
         "nodes": 232,
-        "lines": 3132,
+        "lines": 3131,
         "lowered_ops": {
           "Add": 1,
           "FusedElementwise": 12,
@@ -201,18 +193,18 @@
         },
         "fallback_ops": {},
         "fully_lowered": true,
-        "export_seconds": 0.706,
-        "verify_seconds": 0.83
+        "export_seconds": 0.072,
+        "verify_seconds": 0.234
       }
     }
   },
   "execute": {
     "mobilenetv2": {
-      "build_seconds": 31.5,
+      "build_seconds": 13.3,
       "max_abs_err_vs_ort": 1.049041748046875e-05,
       "top1_agree": true,
-      "median_ms_single_thread": 584.6000000019558
+      "median_ms_single_thread": 291.18612500315066
     }
   },
-  "peak_rss_mb": 520.0
+  "peak_rss_mb": 1421.1
 }

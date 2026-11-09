@@ -61,8 +61,18 @@ class _Encoder(torch.nn.Module):
         self.model = model
 
     def forward(self, input_ids: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        out = self.model(input_ids=input_ids)
+        # Explicit zeros: without them transformers 5 gathers the buffered token type ids by
+        # position (a GatherElements node) where 4.x sliced the buffer; the values are identical.
+        out = self.model(input_ids=input_ids, token_type_ids=torch.zeros_like(input_ids))
         return out.last_hidden_state, out.pooler_output
+
+
+def _causal_mask(*, inputs_embeds: torch.Tensor, **_: object) -> torch.Tensor:
+    """Additive causal mask of shape (1, 1, n, n): 0 on and below the diagonal, min above."""
+    n = int(inputs_embeds.shape[1])
+    blocked = torch.ones(n, n, dtype=torch.bool).triu(1)
+    mask = torch.zeros(n, n, dtype=inputs_embeds.dtype)
+    return mask.masked_fill(blocked, torch.finfo(inputs_embeds.dtype).min)[None, None]
 
 
 def export_text(name: str) -> None:
@@ -72,9 +82,10 @@ def export_text(name: str) -> None:
     if name == "gpt2":
         import transformers.models.gpt2.modeling_gpt2 as gpt2_module
 
-        # The vmap-based mask builder cannot be traced; GPT-2's eager attention applies its own
-        # causal mask from the registered `bias` buffer, and no padding mask is used.
-        gpt2_module.create_causal_mask = lambda *args, **kwargs: None
+        # The vmap-based mask builder cannot be traced. Since transformers 5, GPT-2's eager
+        # attention no longer masks with its `bias` buffer and only adds the mask it is given,
+        # so the export supplies a fixed additive causal mask (no padding mask is used).
+        gpt2_module.create_causal_mask = _causal_mask
         model = GPT2LMHeadModel.from_pretrained("gpt2", attn_implementation="eager").eval()
         wrapped: torch.nn.Module = _LMHead(model)
         outputs = ["logits"]

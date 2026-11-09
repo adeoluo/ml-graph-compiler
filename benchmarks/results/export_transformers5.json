@@ -1,0 +1,329 @@
+{
+  "machine": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "processor": "arm",
+    "python": "3.12.14",
+    "cpus": 8,
+    "load_average_1m": 6.95,
+    "cpu": "Apple M1",
+    "memory_gb": 8.0
+  },
+  "timestamp": "2026-11-08 15:51:51",
+  "old": "transformers 4.57.6",
+  "new": "transformers 5.22.2",
+  "models": {
+    "bert-base": {
+      "old": {
+        "bytes": 438197469,
+        "nodes": 1266,
+        "initializers": 199,
+        "parameters": 109482240,
+        "opset": 14,
+        "producer": "pytorch 2.15.0",
+        "ops": {
+          "Add": 172,
+          "Concat": 49,
+          "Constant": 339,
+          "ConstantOfShape": 1,
+          "Div": 49,
+          "Equal": 1,
+          "Erf": 12,
+          "Expand": 1,
+          "Gather": 4,
+          "Gemm": 1,
+          "MatMul": 96,
+          "Mul": 50,
+          "Pow": 25,
+          "ReduceMean": 50,
+          "Reshape": 49,
+          "Shape": 1,
+          "Softmax": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 1,
+          "Transpose": 120,
+          "Unsqueeze": 182,
+          "Where": 1
+        },
+        "nodes_imported": 927,
+        "nodes_O0": 927,
+        "nodes_fold": 687,
+        "nodes_cse": 687,
+        "nodes_simplify": 675,
+        "nodes_fuse": 246,
+        "nodes_layout": 246,
+        "nodes_loopfuse": 245,
+        "nodes_after_O3": 245,
+        "O3_kernels": {
+          "elementwise": 13,
+          "gather": 2,
+          "gemm": 97,
+          "layer_norm": 25,
+          "softmax": 12,
+          "transpose": 48,
+          "view": 48
+        },
+        "O3_arena_bytes": 2359296,
+        "O3_c_lines": 2199,
+        "O3_source_sha256": "7855f9a89b1e15e38e542d61725e5d7e07fbd47e5ad57e856bf0fef03af5788c",
+        "O3_weights_sha256": "3df54ccb77311b24e9911999"
+      },
+      "new": {
+        "bytes": 438183223,
+        "nodes": 1212,
+        "initializers": 199,
+        "parameters": 109482240,
+        "opset": 14,
+        "producer": "pytorch 2.15.0",
+        "ops": {
+          "Add": 160,
+          "Concat": 48,
+          "Constant": 307,
+          "Div": 37,
+          "Erf": 12,
+          "Gather": 4,
+          "Gemm": 1,
+          "MatMul": 96,
+          "Mul": 61,
+          "Pow": 25,
+          "ReduceMean": 50,
+          "Reshape": 48,
+          "Softmax": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 1,
+          "Transpose": 120,
+          "Unsqueeze": 180
+        },
+        "nodes_imported": 905,
+        "nodes_O0": 905,
+        "nodes_fold": 675,
+        "nodes_cse": 675,
+        "nodes_simplify": 675,
+        "nodes_fuse": 246,
+        "nodes_layout": 246,
+        "nodes_loopfuse": 245,
+        "nodes_after_O3": 245,
+        "O3_kernels": {
+          "elementwise": 13,
+          "gather": 2,
+          "gemm": 97,
+          "layer_norm": 25,
+          "softmax": 12,
+          "transpose": 48,
+          "view": 48
+        },
+        "O3_arena_bytes": 2359296,
+        "O3_c_lines": 2199,
+        "O3_source_sha256": "779a42cd2935c09460447232f26b128915bf82ccc3b0f21450e49638072c6eb1",
+        "O3_weights_sha256": "3df54ccb77311b24e9911999"
+      },
+      "ops_changed": {
+        "Add": [
+          172,
+          160
+        ],
+        "Concat": [
+          49,
+          48
+        ],
+        "Constant": [
+          339,
+          307
+        ],
+        "ConstantOfShape": [
+          1,
+          0
+        ],
+        "Div": [
+          49,
+          37
+        ],
+        "Equal": [
+          1,
+          0
+        ],
+        "Expand": [
+          1,
+          0
+        ],
+        "Mul": [
+          50,
+          61
+        ],
+        "Reshape": [
+          49,
+          48
+        ],
+        "Shape": [
+          1,
+          0
+        ],
+        "Unsqueeze": [
+          182,
+          180
+        ],
+        "Where": [
+          1,
+          0
+        ]
+      },
+      "onnxruntime_outputs": {
+        "inputs": 50,
+        "output": "last_hidden_state",
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "argmax_agreement": "6400 / 6400"
+      },
+      "O3_source_identical": false,
+      "O3_weights_identical": true
+    },
+    "gpt2": {
+      "old": {
+        "bytes": 498304629,
+        "nodes": 2127,
+        "initializers": 148,
+        "parameters": 124439808,
+        "opset": 14,
+        "producer": "pytorch 2.15.0",
+        "ops": {
+          "Add": 111,
+          "Cast": 25,
+          "Concat": 146,
+          "Constant": 831,
+          "ConstantOfShape": 12,
+          "Div": 37,
+          "Gather": 2,
+          "Gemm": 48,
+          "MatMul": 25,
+          "Mul": 73,
+          "Pow": 49,
+          "ReduceMean": 50,
+          "Reshape": 146,
+          "Softmax": 12,
+          "Split": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 12,
+          "Transpose": 49,
+          "Unsqueeze": 425,
+          "Where": 12
+        },
+        "nodes_imported": 1296,
+        "nodes_O0": 1296,
+        "nodes_fold": 687,
+        "nodes_cse": 687,
+        "nodes_simplify": 661,
+        "nodes_fuse": 244,
+        "nodes_layout": 244,
+        "nodes_loopfuse": 232,
+        "nodes_after_O3": 232,
+        "O3_kernels": {
+          "copy": 12,
+          "elementwise": 13,
+          "gather": 1,
+          "gemm": 73,
+          "layer_norm": 25,
+          "softmax": 12,
+          "transpose": 48,
+          "view": 48
+        },
+        "O3_arena_bytes": 3145728,
+        "O3_c_lines": 2186,
+        "O3_source_sha256": "f08794b5ee8e534af38cc79a4b0a618a910948c27d08aae2c8a891a2f5c343d1",
+        "O3_weights_sha256": "8f44598394d9b64a6fe8f40f"
+      },
+      "new": {
+        "bytes": 498880931,
+        "nodes": 2043,
+        "initializers": 148,
+        "parameters": 124439808,
+        "opset": 14,
+        "producer": "pytorch 2.15.0",
+        "ops": {
+          "Add": 111,
+          "Cast": 13,
+          "Concat": 146,
+          "Constant": 795,
+          "Div": 25,
+          "Gather": 2,
+          "Gemm": 48,
+          "MatMul": 25,
+          "Mul": 85,
+          "Pow": 37,
+          "ReduceMean": 50,
+          "Reshape": 146,
+          "Softmax": 12,
+          "Split": 12,
+          "Sqrt": 25,
+          "Sub": 25,
+          "Tanh": 12,
+          "Transpose": 49,
+          "Unsqueeze": 425
+        },
+        "nodes_imported": 1248,
+        "nodes_O0": 1248,
+        "nodes_fold": 675,
+        "nodes_cse": 675,
+        "nodes_simplify": 661,
+        "nodes_fuse": 244,
+        "nodes_layout": 244,
+        "nodes_loopfuse": 232,
+        "nodes_after_O3": 232,
+        "O3_kernels": {
+          "copy": 12,
+          "elementwise": 13,
+          "gather": 1,
+          "gemm": 73,
+          "layer_norm": 25,
+          "softmax": 12,
+          "transpose": 48,
+          "view": 48
+        },
+        "O3_arena_bytes": 3145728,
+        "O3_c_lines": 2186,
+        "O3_source_sha256": "0a93bc913dfbd045dd92bdb8ff086055df2ef516cb0749e2a338fb3bf5ede0e6",
+        "O3_weights_sha256": "a3794543100ee6dcd757b30f"
+      },
+      "ops_changed": {
+        "Cast": [
+          25,
+          13
+        ],
+        "Constant": [
+          831,
+          795
+        ],
+        "ConstantOfShape": [
+          12,
+          0
+        ],
+        "Div": [
+          37,
+          25
+        ],
+        "Mul": [
+          73,
+          85
+        ],
+        "Pow": [
+          49,
+          37
+        ],
+        "Where": [
+          12,
+          0
+        ]
+      },
+      "onnxruntime_outputs": {
+        "inputs": 50,
+        "output": "logits",
+        "max_abs_diff": 0.0,
+        "mean_abs_diff": 0.0,
+        "argmax_agreement": "6400 / 6400"
+      },
+      "O3_source_identical": false,
+      "O3_weights_identical": false
+    }
+  }
+}
