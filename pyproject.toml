@@ -1,6 +1,6 @@
 [project]
 name = "ml-graph-compiler"
-version = "0.1.0"
+version = "0.1.1"
 description = "A deep learning graph compiler: ONNX import, SSA IR, optimization passes, static memory planning and C code generation"
 readme = "README.md"
 requires-python = ">=3.12"

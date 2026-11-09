@@ -6,8 +6,8 @@ abstract: "Deep learning graph compiler: ONNX import, SSA IR, fusion and layout 
 authors:
   - family-names: "Ogunnoiki"
     given-names: "Adeolu"
-version: "0.1.0"
-date-released: "2026-11-07"
+version: "0.1.1"
+date-released: "2026-11-09"
 license: MIT
 repository-code: "https://github.com/adeoluo/ml-graph-compiler"
 url: "https://github.com/adeoluo/ml-graph-compiler"
