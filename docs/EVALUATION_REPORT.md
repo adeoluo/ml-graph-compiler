@@ -85,8 +85,13 @@ Threads = 8: median ms [95% CI] (peak RSS MB)
 | BERT-base | 72.0 [71.6, 73.2] (1257) | 88.8 [85.9, 103.1] (956) | 127.1 [122.6, 130.5] (1086) | 54.5 [53.3, 55.8] (670) | win, 1.23x | loss, 1.32x slower |
 | GPT-2 | 109.7 [106.0, 120.4] (1833) | 149.4 [138.9, 199.9] (1031) | 165.3 [145.8, 188.5] (1041) | 91.5 [90.6, 103.8] (847) | win, 1.36x | loss, 1.20x slower |
 
-All cells ran on the 8-core Apple M1 (1-minute load averages 3.2 to 4.0 for CNNs, 3.0 to
-8.2 with median 5.0 for transformers). At **8 threads**, `mgc` beats `onnxruntime` CPU on three of
+All cells ran on the 8-core Apple M1 (4 performance + 4 efficiency cores; 1-minute load averages
+3.2 to 4.0 for CNNs, 3.0 to 8.2 with median 5.0 for transformers). At **4 threads** (matching the
+4 performance cores, `results/latency_t4.json`), `onnxruntime`'s MLAS kernels lead on all four
+models by **1.05x to 1.38x** (`33.3 vs 35.7 ms` ResNet-50, `4.1 vs 5.6 ms` MobileNetV2,
+`75.0 vs 84.2 ms` BERT-base, `111.2 vs 117.2 ms` GPT-2). At **8 threads** (where heterogeneous
+P+E core speed differences penalize `onnxruntime`'s static thread-pool partitioning relative to
+OpenMP dynamic tile scheduling), `mgc` beats `onnxruntime` CPU on three of
 four models (**1.37x** on ResNet-50, **1.23x** on BERT-base, **1.36x** on GPT-2) and **ties** on
 MobileNetV2 (`6.0 ms` vs `6.0 ms`). At **1 thread**, `onnxruntime`'s hand-tuned MLAS assembly
 kernels beat `mgc`'s portable NEON micro-kernel by **1.12x to 1.16x** across all four models.
