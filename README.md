@@ -16,7 +16,7 @@
 
 > **Evidence level: publicly benchmarked.** Output parity with ONNX Runtime on 3,925 Imagenette images and 6,400 BERT and GPT-2 token positions; latency compared with ONNX Runtime and PyTorch on a single Apple M1. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
 
-## Summary
+## Highlights
 
 A trained AI model is a long recipe of math steps. This project is a compiler: it takes that
 recipe and turns it into fast code for one machine. It does the same job as ONNX Runtime,
