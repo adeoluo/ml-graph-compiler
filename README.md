@@ -14,6 +14,8 @@
 
 ---
 
+> **Evidence level: publicly benchmarked.** Output parity with ONNX Runtime on 3,925 Imagenette images and 6,400 BERT and GPT-2 token positions; latency compared with ONNX Runtime and PyTorch on a single Apple M1. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
+
 ## Motivation
 
 Inference runtimes such as onnxruntime, TVM and XLA all solve the same problem: take a dataflow
