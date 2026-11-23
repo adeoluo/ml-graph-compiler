@@ -6,8 +6,9 @@ each table from those files.
 
 ## Setup
 
-- **Hardware:** one Apple M1 laptop, 8 cores (4 performance, 4 efficiency), 8 GB RAM, macOS 27,
-  shared with other jobs during the runs (load averages are recorded per cell). No GPU is used.
+- **Hardware:** one Apple M1 laptop, 8 cores (4 performance, 4 efficiency), 8 GB RAM, macOS 27
+  (1-minute load averages 3.0 to 8.2 across the benchmark cells, recorded per cell in the raw JSON).
+  No GPU is used.
 - **Software:** Python 3.12, numpy 2.5.4, Apple clang 21 with Homebrew libomp, onnx 1.23.2,
   onnxruntime 1.31.1 (CPU execution provider), PyTorch 2.15.0 with torchvision 0.29.2 and
   transformers 5.22.2 for the exports and eager baselines, LLVM/MLIR from Homebrew for the MLIR
@@ -84,7 +85,7 @@ Threads = 8: median ms [95% CI] (peak RSS MB)
 | BERT-base | 72.0 [71.6, 73.2] (1257) | 88.8 [85.9, 103.1] (956) | 127.1 [122.6, 130.5] (1086) | 54.5 [53.3, 55.8] (670) | win, 1.23x | loss, 1.32x slower |
 | GPT-2 | 109.7 [106.0, 120.4] (1833) | 149.4 [138.9, 199.9] (1031) | 165.3 [145.8, 188.5] (1041) | 91.5 [90.6, 103.8] (847) | win, 1.36x | loss, 1.20x slower |
 
-All cells ran on the unloaded 8-core Apple M1 (1-minute load averages 3.0 to 4.0 for CNNs, 3.0 to
+All cells ran on the 8-core Apple M1 (1-minute load averages 3.2 to 4.0 for CNNs, 3.0 to
 8.2 with median 5.0 for transformers). At **8 threads**, `mgc` beats `onnxruntime` CPU on three of
 four models (**1.37x** on ResNet-50, **1.23x** on BERT-base, **1.36x** on GPT-2) and **ties** on
 MobileNetV2 (`6.0 ms` vs `6.0 ms`). At **1 thread**, `onnxruntime`'s hand-tuned MLAS assembly
@@ -218,9 +219,9 @@ Arena MB by planner (scheduled graph, O3)
 ## Threats to validity
 
 - **Single consumer ARM64 machine.** All runs execute on one 8-core Apple M1 (4 performance + 4
-  efficiency cores, 8 GB unified memory) under low load (1-minute load average median 3.4 for CNNs,
-  5.0 for transformers). Engines are interleaved round robin across three rounds; where 95%
-  bootstrap confidence intervals overlap, the result is called a tie.
+  efficiency cores, 8 GB unified memory; 1-minute load average 3.2 to 4.0 for CNNs, 3.0 to 8.2
+  with median 5.0 for transformers). Engines are interleaved round robin across three rounds;
+  where 95% bootstrap confidence intervals overlap, the result is called a tie.
 - **Memory mapped weights.** The compiled model maps its weights file; on an 8 GB machine the OS
   can still reclaim clean pages of the 0.4 to 0.5 GB transformer weight blobs between subprocess
   rounds, while onnxruntime and PyTorch hold weights in anonymous memory.

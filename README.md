@@ -118,8 +118,9 @@ Threads = 8: median ms [95% CI] (peak RSS MB)
 | BERT-base | 72.0 [71.6, 73.2] (1257) | 88.8 [85.9, 103.1] (956) | 127.1 [122.6, 130.5] (1086) | 54.5 [53.3, 55.8] (670) | win, 1.23x | loss, 1.32x slower |
 | GPT-2 | 109.7 [106.0, 120.4] (1833) | 149.4 [138.9, 199.9] (1031) | 165.3 [145.8, 188.5] (1041) | 91.5 [90.6, 103.8] (847) | win, 1.36x | loss, 1.20x slower |
 
-All cells ran on the unloaded 8-core Apple M1 (1-minute load average median 3.4 for CNNs, 5.0
-for transformers, well within the 8 cores). Every engine scales cleanly from 1 to 8 threads
+All cells ran on one 8-core Apple M1 workstation (1-minute load average 3.2 to 4.0, median 3.4
+for CNNs; 3.0 to 8.2, median 5.0 for transformers; recorded per cell in `benchmarks/results/`).
+Every engine scales cleanly from 1 to 8 threads
 except PyTorch eager on MobileNetV2 (where depthwise separable convolutions suffer thread-pool
 synchronization overhead at batch 1) and PyTorch eager on the transformers (which dispatches GEMM
 to Apple Accelerate AMX coprocessor blocks and already saturates at `threads=1`).
