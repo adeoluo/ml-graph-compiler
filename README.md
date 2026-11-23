@@ -16,6 +16,24 @@
 
 > **Evidence level: publicly benchmarked.** Output parity with ONNX Runtime on 3,925 Imagenette images and 6,400 BERT and GPT-2 token positions; latency compared with ONNX Runtime and PyTorch on a single Apple M1. Not independently reproduced and not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
 
+## In plain English
+
+A trained AI model is a long recipe of math steps. This project is a compiler: it takes that
+recipe and turns it into fast code for one machine. It does the same job as ONNX Runtime,
+Microsoft's widely used engine, and is measured against it.
+
+- **Same answers as the reference engine.** On 3,925 real photos it picks the same top answer
+  as ONNX Runtime every single time, for both image models tested.
+- **Faster than ONNX Runtime when using all 8 cores.** 1.23x to 1.37x faster on three of four
+  well-known models (ResNet-50, BERT, GPT-2) and a tie on the fourth.
+- **Needs far less working memory.** Its memory planner cuts GPT-2's scratch space from
+  113.6 MB to 3.0 MB.
+- **No borrowed math library.** The core matrix multiply is written by hand for Arm chips.
+
+**Where it falls short:** with 1 or 4 cores ONNX Runtime is still faster (by 1.05x to 1.38x).
+All timings come from one Apple M1 laptop, and the 8-core win depends on that chip's mix of
+fast and slow cores.
+
 ## Motivation
 
 Inference runtimes such as onnxruntime, TVM and XLA all solve the same problem: take a dataflow
