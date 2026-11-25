@@ -14,7 +14,7 @@
 
 ---
 
-> **Evidence level: publicly benchmarked.** The compiled models give the same outputs as ONNX Runtime (ORT), Microsoft's widely used engine for running ONNX models, apart from tiny rounding differences. This was checked on 3,925 images from Imagenette, a 10-class subset of the ImageNet photo collection. It was also checked on 6,400 token positions (word pieces of the input text) for each of two text models, BERT and GPT-2. Speed was compared with ONNX Runtime and with PyTorch (a popular machine learning framework) on a single Apple M1 laptop. No one else has reproduced these results, and the compiler is not used in production. [What the levels mean](https://github.com/adeoluo#evidence-levels).
+> **Evidence level: publicly benchmarked.** The compiled models give the same outputs as ONNX Runtime (ORT), Microsoft's widely used engine for running ONNX models, apart from tiny rounding differences. This was checked on 3,925 images from Imagenette, a 10-class subset of the ImageNet photo collection. It was also checked on 6,400 token positions (word pieces of the input text) for each of two text models, BERT and GPT-2. Speed was compared with ONNX Runtime and with PyTorch (a popular machine learning framework) on a single Apple M1 laptop. No one else has reproduced these results, and the compiler is not used in production.
 
 ## Highlights
 
